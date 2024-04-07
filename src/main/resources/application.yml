@@ -15,7 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-          
+    defer-datasource-initialization: true
 springdoc:
   api-docs:
     path: /api-docs
