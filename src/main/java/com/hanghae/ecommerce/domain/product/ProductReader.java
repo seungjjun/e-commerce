@@ -15,4 +15,8 @@ public class ProductReader {
     public List<Product> readAll() {
         return productRepository.findAll();
     }
+
+    public Product readById(Long productId) {
+        return productRepository.findById(productId);
+    }
 }

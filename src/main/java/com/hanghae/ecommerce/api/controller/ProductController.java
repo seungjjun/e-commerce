@@ -33,7 +33,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductDetailResponse getProduct(@PathVariable Long id) {
-        return new ProductDetailResponse(id, "후드티", 70_000L, 7L, "편한 후드티");
+        Product product = productService.getProductDetail(id);
+        return ProductDetailResponse.from(product);
     }
 
     @GetMapping("/popular")

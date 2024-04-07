@@ -3,6 +3,7 @@ package com.hanghae.ecommerce.api.controller;
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductCoreService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,5 +46,24 @@ class ProductControllerTest {
                         jsonPath("$.products[0].price").value(50000),
                         jsonPath("$.products[1].name").value("맨투맨"),
                         jsonPath("$.products[1].price").value(39000));
+    }
+
+    @Test
+    @DisplayName("[GET] 상품 상제 조회 성공")
+    void succeed__get_product_detail() throws Exception {
+        // Given
+        Long productId = 1L;
+
+        Product product = Fixtures.product("후드티");
+
+        given(productCoreService.getProductDetail(productId)).willReturn(product);
+
+        // When && Then
+        mockMvc.perform(get("/products/" + productId))
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.name").value("후드티"),
+                        jsonPath("$.price").value(50000)
+                );
     }
 }
