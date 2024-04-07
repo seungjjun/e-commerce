@@ -18,4 +18,10 @@ public class UserPointService implements UserPointCoreService {
         User chargedUser = userPointManager.chargePoint(user, amount);
         return chargedUser.point();
     }
+
+    @Override
+    public Long getPoint(Long userId) {
+        User user = userReader.readById(userId);
+        return user.point();
+    }
 }

@@ -19,13 +19,14 @@ public class AccountController {
 
     @GetMapping("/{userId}/balance")
     public BalanceResponse getBalance(@PathVariable Long userId) {
-        return new BalanceResponse(50_000L);
+        Long balance = userPointCoreService.getPoint(userId);
+        return BalanceResponse.from(balance);
     }
 
     @PatchMapping("/{userId}/charge")
     public ChargeResponse charge(@PathVariable Long userId,
                                  @Valid @RequestBody ChargingAmountRequest request) {
-        Long balnace = userPointCoreService.chargePoint(userId, request.amount());
-        return new ChargeResponse(balnace);
+        Long balance = userPointCoreService.chargePoint(userId, request.amount());
+        return ChargeResponse.from(balance);
     }
 }
