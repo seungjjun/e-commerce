@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,5 +77,20 @@ class AccountControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("잔액 조회 성공")
+    void get_user_point_balance() throws Exception {
+        // Given
+        Long userId = 1L;
+        Long balance = 5000L;
+
+        given(userPointCoreService.getPoint(userId)).willReturn(balance);
+
+        // When && Then
+        mockMvc.perform(get("/accounts/" + userId + "/balance"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.balance").value(5000L));
     }
 }

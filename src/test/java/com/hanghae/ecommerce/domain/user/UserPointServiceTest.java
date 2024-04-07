@@ -40,4 +40,19 @@ class UserPointServiceTest {
         // Then
         assertThat(balance).isEqualTo(50_000L + 500L);
     }
+
+    @Test
+    @DisplayName("잔액 조회 성공")
+    void get_user_point_balance() {
+        // Given
+        Long userId = 1L;
+
+        given(userReader.readById(userId)).willReturn(Fixtures.user(userId));
+
+        // When
+        Long balance = userPointService.getPoint(userId);
+
+        // Then
+        assertThat(balance).isEqualTo(50_000L);
+    }
 }
