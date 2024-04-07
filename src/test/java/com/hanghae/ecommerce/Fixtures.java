@@ -1,6 +1,7 @@
 package com.hanghae.ecommerce;
 
 import com.hanghae.ecommerce.domain.product.Product;
+import com.hanghae.ecommerce.domain.user.User;
 import jakarta.persistence.EntityNotFoundException;
 
 public class Fixtures {
@@ -15,4 +16,13 @@ public class Fixtures {
 
         throw new EntityNotFoundException("Product Not Found - name: " + name);
     }
+
+    public static User user(Long id) {
+        if (id.equals(1L)) {
+            return new User(1L, "홍길동", "서울특별시 송파구", "01012345678", 50_000L);
+        }
+
+        throw new EntityNotFoundException("User Not Found - id: " + id);
+    }
+
 }
