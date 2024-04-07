@@ -16,4 +16,9 @@ public class ProductService implements ProductCoreService {
     public List<Product> getProducts() {
         return productReader.readAll();
     }
+
+    @Override
+    public Product getProductDetail(Long productId) {
+        return productReader.readById(productId);
+    }
 }

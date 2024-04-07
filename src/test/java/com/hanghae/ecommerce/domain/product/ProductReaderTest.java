@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -38,6 +39,24 @@ class ProductReaderTest {
         assertThat(products.size()).isEqualTo(2);
         assertThat(products.get(0).name()).isEqualTo("후드티");
         assertThat(products.get(1).name()).isEqualTo("맨투맨");
+    }
+
+    @Test
+    @DisplayName("상품 삼세 정보를 조회한다.")
+    void readProduct() {
+        // Given
+        Long productId = 2L;
+
+        Product product = Fixtures.product("맨투맨");
+
+        given(productRepository.findById(any())).willReturn(product);
+
+        // When
+        Product foundProduct = productReader.readById(productId);
+
+        // Then
+        assertThat(foundProduct.name()).isEqualTo("맨투맨");
+        assertThat(foundProduct.description()).isEqualTo("늘어나지 않는 맨투맨");
     }
 
 }

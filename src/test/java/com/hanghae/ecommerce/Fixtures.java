@@ -10,7 +10,7 @@ public class Fixtures {
         }
 
         if (name.equals("맨투맨")) {
-            return new Product(1L, "맨투맨", 39_000L, "늘어나지 않는 맨투맨", 10L);
+            return new Product(2L, "맨투맨", 39_000L, "늘어나지 않는 맨투맨", 10L);
         }
 
         throw new EntityNotFoundException("Product Not Found - name: " + name);
