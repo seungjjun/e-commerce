@@ -30,4 +30,11 @@ public class ProductCoreRepository implements ProductRepository {
                 .orElseThrow(() -> new EntityNotFoundException("상품 정보를 찾지 못했습니다. - id: " + productId))
                 .toProduct();
     }
+
+    @Override
+    public List<Product> findByIdIn(List<Long> productIds) {
+        return productJpaRepository.findByIdIn(productIds).stream()
+                .map(ProductEntity::toProduct)
+                .toList();
+    }
 }
