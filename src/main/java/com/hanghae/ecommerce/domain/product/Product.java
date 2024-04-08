@@ -7,4 +7,11 @@ public record Product(
         String description,
         Long stockQuantity
 ) {
+    public Long orderTotalPrice(Long quantity) {
+        return price * quantity;
+    }
+
+    public boolean isRemainingProductStock(Long orderQuantity) {
+        return stockQuantity >= orderQuantity;
+    }
 }

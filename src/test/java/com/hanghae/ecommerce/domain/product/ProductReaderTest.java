@@ -1,6 +1,7 @@
 package com.hanghae.ecommerce.domain.product;
 
 import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,4 +60,28 @@ class ProductReaderTest {
         assertThat(foundProduct.description()).isEqualTo("늘어나지 않는 맨투맨");
     }
 
+    @Test
+    @DisplayName("상품 id list 기반으로 상품을 조회한다.")
+    void readAllProductByIds() {
+        // Given
+        List<OrderRequest.ProductOrderRequest> productOrderRequests = List.of(
+                new OrderRequest.ProductOrderRequest(1L, 1L),
+                new OrderRequest.ProductOrderRequest(2L, 5L)
+        );
+
+        List<Product> products = List.of(
+                Fixtures.product("후드티"),
+                Fixtures.product("맨투맨")
+        );
+
+        given(productRepository.findByIdIn(any())).willReturn(products);
+
+        // When
+        List<Product> foundProducts = productReader.readAllByIds(productOrderRequests);
+
+        // Then
+        assertThat(foundProducts).isNotNull();
+        assertThat(foundProducts.get(0).name()).isEqualTo("후드티");
+        assertThat(foundProducts.get(1).name()).isEqualTo("맨투맨");
+    }
 }
