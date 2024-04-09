@@ -5,6 +5,7 @@ import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderRepository;
 import com.hanghae.ecommerce.domain.user.User;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -38,5 +39,12 @@ public class OrderCoreRepository implements OrderRepository {
                 .orElseThrow();
         orderEntity.updateStatus(orderStatus);
         return orderJpaRepository.save(orderEntity).toOrder();
+    }
+
+    @Override
+    public Order findById(Long orderId) {
+        return orderJpaRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("주문 정보를 찾지 못했습니다. - id: " + orderId))
+                .toOrder();
     }
 }

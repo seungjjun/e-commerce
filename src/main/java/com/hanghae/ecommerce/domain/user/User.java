@@ -10,4 +10,8 @@ public record User(
     public User addPoint(Long chargingPoint) {
         return new User(id, name, address, phoneNumber, point + chargingPoint);
     }
+
+    public User minusPoint(Long amount) {
+        return new User(id, name, address, phoneNumber, point - amount);
+    }
 }

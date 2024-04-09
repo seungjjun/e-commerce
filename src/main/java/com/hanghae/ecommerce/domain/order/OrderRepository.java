@@ -8,4 +8,6 @@ public interface OrderRepository {
     Order order(User user, OrderRequest request);
 
     Order updateStatus(Order order, OrderStatus orderStatus);
+
+    Order findById(Long orderId);
 }
