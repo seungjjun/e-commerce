@@ -14,4 +14,8 @@ public record Product(
     public boolean isRemainingProductStock(Long orderQuantity) {
         return stockQuantity >= orderQuantity;
     }
+
+    public Product decreaseStock(Long quantity) {
+        return new Product(id, name, price, description, stockQuantity - quantity);
+    }
 }

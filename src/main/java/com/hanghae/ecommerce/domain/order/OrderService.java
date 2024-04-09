@@ -4,6 +4,7 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.orderitem.OrderItemAppender;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductReader;
+import com.hanghae.ecommerce.domain.product.ProductUpdater;
 import com.hanghae.ecommerce.domain.product.ProductValidator;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserReader;
@@ -16,14 +17,22 @@ import java.util.List;
 public class OrderService implements OrderCoreService {
     private final UserReader userReader;
     private final ProductReader productReader;
+    private final ProductUpdater productUpdater;
     private final OrderItemAppender orderItemAppender;
     private final OrderProcessor orderProcessor;
     private final OrderUpdater orderUpdater;
     private final ProductValidator productValidator;
 
-    public OrderService(UserReader userReader, ProductReader productReader, OrderItemAppender orderItemAppender, OrderProcessor orderProcessor, OrderUpdater orderUpdater, ProductValidator productValidator) {
+    public OrderService(UserReader userReader,
+                        ProductReader productReader,
+                        ProductUpdater productUpdater,
+                        OrderItemAppender orderItemAppender,
+                        OrderProcessor orderProcessor,
+                        OrderUpdater orderUpdater,
+                        ProductValidator productValidator) {
         this.userReader = userReader;
         this.productReader = productReader;
+        this.productUpdater = productUpdater;
         this.orderItemAppender = orderItemAppender;
         this.orderProcessor = orderProcessor;
         this.orderUpdater = orderUpdater;
@@ -39,6 +48,7 @@ public class OrderService implements OrderCoreService {
         List<Product> products = productReader.readAllByIds(request.products());
 
         productValidator.checkProductStockQuantityForOrder(order, products, request.products());
+        productUpdater.updateStock(products, request.products());
 
         orderItemAppender.create(order, products, request.products());
         return orderUpdater.changeStatus(order, OrderStatus.COMPLETE);

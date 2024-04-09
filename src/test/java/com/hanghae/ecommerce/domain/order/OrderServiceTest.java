@@ -5,6 +5,7 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.orderitem.OrderItemAppender;
 import com.hanghae.ecommerce.domain.product.ProductReader;
+import com.hanghae.ecommerce.domain.product.ProductUpdater;
 import com.hanghae.ecommerce.domain.product.ProductValidator;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserReader;
@@ -25,6 +26,7 @@ class OrderServiceTest {
     private OrderService orderService;
     private UserReader userReader;
     private ProductReader productReader;
+    private ProductUpdater productUpdater;
     private OrderItemAppender orderItemAppender;
     private OrderProcessor orderProcessor;
     private OrderUpdater orderUpdater;
@@ -37,12 +39,13 @@ class OrderServiceTest {
     void setUp() {
         userReader = mock(UserReader.class);
         productReader = mock(ProductReader.class);
+        productUpdater = mock(ProductUpdater.class);
         orderItemAppender = mock(OrderItemAppender.class);
         orderProcessor = mock(OrderProcessor.class);
         orderUpdater = mock(OrderUpdater.class);
         productValidator = mock(ProductValidator.class);
 
-        orderService = new OrderService(userReader, productReader, orderItemAppender, orderProcessor, orderUpdater, productValidator);
+        orderService = new OrderService(userReader, productReader, productUpdater, orderItemAppender, orderProcessor, orderUpdater, productValidator);
 
         user = Fixtures.user(1L);
         request = new OrderRequest(
@@ -77,6 +80,7 @@ class OrderServiceTest {
         assertThat(order).isNotNull();
         assertThat(order.payAmount()).isEqualTo(89_000L);
         assertThat(order.orderStatus()).isEqualTo("complete");
+        verify(productUpdater, atLeastOnce()).updateStock(any(), any());
         verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
     }
 }

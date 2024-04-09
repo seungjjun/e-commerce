@@ -29,4 +29,8 @@ public class ProductEntity extends BaseEntity {
     public Product toProduct() {
         return new Product(getId(), name, price, description, stockQuantity);
     }
+
+    public void updateStock(Long stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
 }
