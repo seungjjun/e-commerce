@@ -37,4 +37,11 @@ public class ProductCoreRepository implements ProductRepository {
                 .map(ProductEntity::toProduct)
                 .toList();
     }
+
+    @Override
+    public void updateStock(Product product) {
+        ProductEntity productEntity = productJpaRepository.findById(product.id())
+                .orElseThrow(() -> new EntityNotFoundException("상품 정보를 찾지 못했습니다. - id: " + product.id()));
+        productEntity.updateStock(product.stockQuantity());
+    }
 }

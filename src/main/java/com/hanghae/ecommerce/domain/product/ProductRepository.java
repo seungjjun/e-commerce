@@ -8,4 +8,6 @@ public interface ProductRepository {
     Product findById(Long productId);
 
     List<Product> findByIdIn(List<Long> productIds);
+
+    void updateStock(Product product);
 }

@@ -47,4 +47,18 @@ class ProductTest {
         // Then
         assertThat(result).isFalse();
     }
+
+    @Test
+    @DisplayName("상품 재고를 감소한다")
+    void decrease_stock() {
+        // Given
+        Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 3L);
+        Long orderStockQuantity = 2L;
+
+        // When
+        Product decreasedProduct = product.decreaseStock(orderStockQuantity);
+
+        // Then
+        assertThat(decreasedProduct.stockQuantity()).isEqualTo(3L - 2L);
+    }
 }
