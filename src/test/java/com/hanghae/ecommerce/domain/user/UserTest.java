@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class UserTest {
     @Test
-    @DisplayName("포인트 Add 테스트")
+    @DisplayName("포인트 충전 테스트")
     void addPoint() {
         // Given
         User user = Fixtures.user(1L);
@@ -18,6 +18,19 @@ class UserTest {
 
         // Then
         assertThat(addedPointUser.point()).isEqualTo(50_000 + 10_000);
+    }
+    
+    @Test
+    @DisplayName("포인트 차감 테스트")
+    void minusPoint() {
+        // Given
+        User user = Fixtures.user(1L);
+        
+        // When
+        User minusedPointUser = user.minusPoint(30_000L);
+
+        // Then
+        assertThat(minusedPointUser.point()).isEqualTo(50_000 - 30_000);
     }
 
 }

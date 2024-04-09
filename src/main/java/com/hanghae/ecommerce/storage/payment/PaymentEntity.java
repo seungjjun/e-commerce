@@ -1,5 +1,6 @@
 package com.hanghae.ecommerce.storage.payment;
 
+import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.storage.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -20,4 +21,14 @@ public class PaymentEntity extends BaseEntity {
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PayType paymentMethod;
+
+    public PaymentEntity(Long orderId, Long payAmount, PayType paymentMethod) {
+        this.orderId = orderId;
+        this.payAmount = payAmount;
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Payment toPayment() {
+        return new Payment(getId(), orderId, payAmount, paymentMethod.toString(), getCreatedAt());
+    }
 }

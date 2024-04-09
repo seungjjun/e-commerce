@@ -2,9 +2,11 @@ package com.hanghae.ecommerce;
 
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.orderitem.OrderItem;
+import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
+import com.hanghae.ecommerce.storage.payment.PayType;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDateTime;
@@ -60,5 +62,13 @@ public class Fixtures {
         }
 
         throw new EntityNotFoundException("Order Item Not Found - order id: " + orderId + ", product id: " + productId);
+    }
+
+    public static Payment payment(Long orderId) {
+        if (orderId.equals(1L)) {
+            return new Payment(1L, orderId, 89_000L, PayType.CARD.toString(), LocalDateTime.now());
+        }
+
+        throw new EntityNotFoundException("Payment Not Found - order id: " + orderId);
     }
 }

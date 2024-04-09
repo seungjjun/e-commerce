@@ -1,5 +1,7 @@
 package com.hanghae.ecommerce.api.controller;
 
+import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.payment.PaymentCoreService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PaymentController.class)
@@ -17,11 +23,18 @@ class PaymentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private PaymentCoreService paymentCoreService;
+
     @Test
     @DisplayName("결제 요청 성공")
     void succeed_post_payment() throws Exception {
         // Given
         Long userId = 1L;
+
+        Payment payment = Fixtures.payment(1L);
+
+        given(paymentCoreService.pay(anyLong(), any())).willReturn(payment);
 
         // When && Then
         mockMvc.perform(post("/payments/" + userId)
@@ -29,11 +42,16 @@ class PaymentControllerTest {
                         .content("""
                                 {
                                    "orderId" : 1,
-                                   "payAmount" : 50000,
+                                   "payAmount" : 89000,
                                    "paymentMethod" : "CARD"
                                 }
                                 """))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpectAll(
+                        jsonPath("$.id").value(1L),
+                        jsonPath("$.payAmount").value(89_000L),
+                        jsonPath("$.paymentMethod").value("CARD")
+                );
     }
 
     @Test
