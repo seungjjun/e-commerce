@@ -50,7 +50,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("[GET] 상품 상제 조회 성공")
-    void succeed__get_product_detail() throws Exception {
+    void succeed_get_product_detail() throws Exception {
         // Given
         Long productId = 1L;
 
@@ -64,6 +64,26 @@ class ProductControllerTest {
                 .andExpectAll(
                         jsonPath("$.name").value("후드티"),
                         jsonPath("$.price").value(50000)
+                );
+    }
+
+    @Test
+    @DisplayName("[GET] 인기 상품 조회 성공")
+    void succeed_get_popular_products() throws Exception {
+        // Given
+        Product product1 = Fixtures.product("후드티");
+        Product product2 = Fixtures.product("맨투맨");
+
+        given(productCoreService.getPopularProducts()).willReturn(
+                List.of(product1, product2)
+        );
+
+        // When && Then
+        mockMvc.perform(get("/products/popular"))
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.products[0].name").value("후드티"),
+                        jsonPath("$.products[1].name").value("맨투맨")
                 );
     }
 }

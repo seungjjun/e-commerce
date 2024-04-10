@@ -6,4 +6,6 @@ public interface ProductCoreService {
     List<Product> getProducts();
 
     Product getProductDetail(Long productId);
+
+    List<Product> getPopularProducts();
 }
