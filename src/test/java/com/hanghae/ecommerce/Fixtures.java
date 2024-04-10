@@ -61,6 +61,10 @@ public class Fixtures {
             return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "paid", LocalDateTime.now());
         }
 
+        if (orderStatus.equals(OrderStatus.PAY_FAILED)) {
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "pay failed", LocalDateTime.now());
+        }
+
         throw new EntityNotFoundException("Order Not Found - order status: " + orderStatus);
     }
 

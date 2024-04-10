@@ -6,6 +6,7 @@ import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.storage.orderitem.OrderItemEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class    OrderItemAppender {
         this.orderItemRepository = orderItemRepository;
     }
 
+    @Transactional
     public List<OrderItem> create(Order order,
                                   List<Product> products,
                                   List<OrderRequest.ProductOrderRequest> productOrderRequests) {

@@ -48,7 +48,7 @@ public class OrderService implements OrderCoreService {
         List<Product> products = productReader.readAllByIds(request.products());
 
         productValidator.checkProductStockQuantityForOrder(order, products, request.products());
-        productUpdater.updateStock(products, request.products());
+        productUpdater.updateStockForOrder(products, request.products());
 
         orderItemAppender.create(order, products, request.products());
         return orderUpdater.changeStatus(order, OrderStatus.COMPLETE);

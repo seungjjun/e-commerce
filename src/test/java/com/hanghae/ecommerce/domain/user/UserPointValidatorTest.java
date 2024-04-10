@@ -3,6 +3,7 @@ package com.hanghae.ecommerce.domain.user;
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderUpdater;
+import com.hanghae.ecommerce.domain.product.ProductManager;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,16 +15,18 @@ import static org.mockito.Mockito.*;
 class UserPointValidatorTest {
     private UserPointValidator userPointValidator;
     private OrderUpdater orderUpdater;
+    private ProductManager productManager;
 
     @BeforeEach
     void setUp() {
         orderUpdater = mock(OrderUpdater.class);
+        productManager = mock(ProductManager.class);
 
-        userPointValidator = new UserPointValidator(orderUpdater);
+        userPointValidator = new UserPointValidator(orderUpdater, productManager);
     }
 
     @Test
-    @DisplayName("결제 금액보다 포인트가 적은 경우 에러가 발생한다.")
+    @DisplayName("결제 금액보다 포인트가 적은 경우 에러가 발생하고, 재고 업데이트 메서드가 호출된다.")
     void when_not_enough_point_then_failed_use_point() {
         // Given
         User user = Fixtures.user(1L);
@@ -36,6 +39,7 @@ class UserPointValidatorTest {
         });
 
         verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
+        verify(productManager, atLeastOnce()).compensateProduct(any());
     }
 
     @Test

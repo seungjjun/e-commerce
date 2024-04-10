@@ -20,4 +20,11 @@ public class OrderItemCoreRepository implements OrderItemRepository {
                 .stream().map(OrderItemEntity::toOrderItem)
                 .toList();
     }
+
+    @Override
+    public List<OrderItem> findAllByOrderId(Long orderId) {
+        return orderItemJpaRepository.findAllByOrderId(orderId).stream()
+                .map(OrderItemEntity::toOrderItem)
+                .toList();
+    }
 }
