@@ -18,4 +18,8 @@ public record Product(
     public Product decreaseStock(Long quantity) {
         return new Product(id, name, price, description, stockQuantity - quantity);
     }
+
+    public Product increaseStock(Long quantity) {
+        return new Product(id, name, price, description, stockQuantity + quantity);
+    }
 }

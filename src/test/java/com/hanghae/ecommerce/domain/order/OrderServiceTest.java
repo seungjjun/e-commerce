@@ -80,7 +80,7 @@ class OrderServiceTest {
         assertThat(order).isNotNull();
         assertThat(order.payAmount()).isEqualTo(89_000L);
         assertThat(order.orderStatus()).isEqualTo("complete");
-        verify(productUpdater, atLeastOnce()).updateStock(any(), any());
+        verify(productUpdater, atLeastOnce()).updateStockForOrder(any(), any());
         verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
     }
 }
