@@ -60,4 +60,22 @@ class ProductServiceTest {
         assertThat(productDetail.stockQuantity()).isEqualTo(5L);
         assertThat(productDetail.description()).isEqualTo("그레이 후드티");
     }
+
+    @Test
+    @DisplayName("인기 상품을 조회한다.")
+    void getPopularProducts() {
+        // Given
+        Product product1 = Fixtures.product("후드티");
+        Product product2 = Fixtures.product("맨투맨");
+
+        given(productReader.readPopularProducts()).willReturn(
+                List.of(product1, product2)
+        );
+
+        // When
+        List<Product> popularProducts = productService.getPopularProducts();
+
+        // Then
+        assertThat(popularProducts.size()).isEqualTo(2);
+    }
 }

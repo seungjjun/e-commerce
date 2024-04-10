@@ -39,13 +39,11 @@ public class ProductController {
 
     @GetMapping("/popular")
     public ProductListResponse popularProducts() {
-        return new ProductListResponse(
-                List.of(
-                        new ProductSummaryResponse(1L, "후드티", 70_000L),
-                        new ProductSummaryResponse(2L, "맨투맨", 59_000L),
-                        new ProductSummaryResponse(3L, "슬랙스", 49_000L),
-                        new ProductSummaryResponse(4L, "반팔티", 19_000L),
-                        new ProductSummaryResponse(5L, "모자", 39_000L)
-                ));
+        List<Product> products = productService.getPopularProducts();
+
+        List<ProductSummaryResponse> productSummaryResponseList = products.stream()
+                .map(ProductSummaryResponse::from)
+                .toList();
+        return new ProductListResponse(productSummaryResponseList);
     }
 }

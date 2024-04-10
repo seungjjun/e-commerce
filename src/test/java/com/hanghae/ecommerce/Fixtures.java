@@ -21,6 +21,18 @@ public class Fixtures {
             return new Product(2L, "맨투맨", 39_000L, "늘어나지 않는 맨투맨", 10L);
         }
 
+        if (name.equals("슬랙스")) {
+            return new Product(3L, "슬랙스", 20_000L, "와이드 슬랙스", 100L);
+        }
+
+        if (name.equals("백팩")) {
+            return new Product(4L, "백팩", 60_000L, "아주 큰 백팩", 5L);
+        }
+
+        if (name.equals("모자")) {
+            return new Product(5L, "모자", 15_000L, "캡 모자", 50L);
+        }
+
         throw new EntityNotFoundException("Product Not Found - name: " + name);
     }
 

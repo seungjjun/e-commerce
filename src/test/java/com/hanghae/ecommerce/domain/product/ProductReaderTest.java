@@ -84,4 +84,25 @@ class ProductReaderTest {
         assertThat(foundProducts.get(0).name()).isEqualTo("후드티");
         assertThat(foundProducts.get(1).name()).isEqualTo("맨투맨");
     }
+
+    @Test
+    @DisplayName("최근 3일 동안 가장 많이 팔린 상품을 조회한다.")
+    void read_recent_three_days_popular_products() {
+        // Given
+        given(productRepository.findTopSellingProducts(any(), any(), any(), any())).willReturn(
+                List.of(Fixtures.product("후드티"),
+                        Fixtures.product("맨투맨"),
+                        Fixtures.product("슬랙스"),
+                        Fixtures.product("백팩"),
+                        Fixtures.product("모자"))
+        );
+
+        // When
+        List<Product> popularProducts = productReader.readPopularProducts();
+
+        // Then
+        assertThat(popularProducts.size()).isEqualTo(5);
+        assertThat(popularProducts.getFirst().name()).isEqualTo("후드티");
+        assertThat(popularProducts.getLast().name()).isEqualTo("모자");
+    }
 }
