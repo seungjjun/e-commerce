@@ -4,7 +4,6 @@ import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.orderitem.OrderItem;
 import com.hanghae.ecommerce.domain.orderitem.OrderItemReader;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class ProductManager {
         this.productUpdater = productUpdater;
     }
 
-    @Transactional
     public void compensateProduct(Order order) {
         Long orderId = order.id();
 

@@ -43,7 +43,8 @@ class OrderProcessorTest {
                 List.of(
                         new OrderRequest.ProductOrderRequest(1L, 1L)
                 ),
-                50_000L
+                50_000L,
+                "CARD"
         );
         Order order = new Order(
                 1L,
@@ -61,7 +62,7 @@ class OrderProcessorTest {
         Order createdOrder = orderProcessor.order(user, orderRequest);
 
         // Then
-        assertThat(createdOrder.orderStatus()).isEqualTo("ready");
+        assertThat(createdOrder.orderStatus()).isEqualTo("READY");
         assertThat(createdOrder.payAmount()).isEqualTo(50_000L);
     }
 }

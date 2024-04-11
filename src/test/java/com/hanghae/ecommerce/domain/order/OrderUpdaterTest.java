@@ -36,7 +36,7 @@ class OrderUpdaterTest {
         Order order = orderUpdater.changeStatus(readyOrder, OrderStatus.CANCELED);
 
         // Then
-        assertThat(order.orderStatus()).isEqualTo("canceled");
+        assertThat(order.orderStatus()).isEqualTo("CANCELED");
     }
 
 }

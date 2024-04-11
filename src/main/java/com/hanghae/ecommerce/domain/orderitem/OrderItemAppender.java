@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class    OrderItemAppender {
+public class OrderItemAppender {
     private final OrderItemRepository orderItemRepository;
 
     public OrderItemAppender(OrderItemRepository orderItemRepository) {

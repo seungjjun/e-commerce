@@ -12,6 +12,7 @@ public class OrderUpdater {
     }
 
     public Order changeStatus(Order order, OrderStatus orderStatus) {
-        return orderRepository.updateStatus(order, orderStatus);
+        Order changedStatusOrder = order.changeStatus(orderStatus);
+        return orderRepository.updateStatus(changedStatusOrder, orderStatus);
     }
 }
