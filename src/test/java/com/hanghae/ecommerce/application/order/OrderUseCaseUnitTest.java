@@ -20,6 +20,7 @@ import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ class OrderUseCaseUnitTest {
     private ProductCoreService productService;
     private OrderCoreService orderService;
     private PaymentCoreService paymentService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private OrderUseCase orderUseCase;
 
@@ -43,8 +45,9 @@ class OrderUseCaseUnitTest {
         productService = mock(ProductService.class);
         orderService = mock(OrderService.class);
         paymentService = mock(PaymentService.class);
+        applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
-        orderUseCase = new OrderUseCase(userService, productService, orderService, paymentService);
+        orderUseCase = new OrderUseCase(userService, productService, orderService, paymentService, applicationEventPublisher);
     }
 
     @Test
