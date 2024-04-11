@@ -1,5 +1,6 @@
 package com.hanghae.ecommerce.application.order;
 
+import com.hanghae.ecommerce.api.dto.OrderEventForStatistics;
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.order.Order;
@@ -10,6 +11,7 @@ import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductCoreService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserCoreService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +24,17 @@ public class OrderUseCase {
     private final ProductCoreService productService;
     private final OrderCoreService orderService;
     private final PaymentCoreService paymentService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderUseCase(UserCoreService userService,
                         ProductCoreService productService,
                         OrderCoreService orderService,
-                        PaymentCoreService paymentService) {
+                        PaymentCoreService paymentService, ApplicationEventPublisher applicationEventPublisher) {
         this.userService = userService;
         this.productService = productService;
         this.orderService = orderService;
         this.paymentService = paymentService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -43,6 +47,8 @@ public class OrderUseCase {
         Payment payment = paymentService.pay(user, order, request);
 
         productService.decreaseStock(products, request);
+
+        applicationEventPublisher.publishEvent(new OrderEventForStatistics(order, payment));
         return OrderPaidResult.of(order, payment);
     }
 }
