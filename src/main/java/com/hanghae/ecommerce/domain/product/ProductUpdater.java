@@ -3,8 +3,8 @@ package com.hanghae.ecommerce.domain.product;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -19,8 +19,8 @@ public class ProductUpdater {
         productRepository.updateStock(product);
     }
 
-    @Transactional
-    public void updateStockForOrder(List<Product> products, List<OrderRequest.ProductOrderRequest> productOrderRequests) {
+    public List<Product> updateStockForOrder(List<Product> products, List<OrderRequest.ProductOrderRequest> productOrderRequests) {
+        List<Product> productList = new ArrayList<>();
         for (OrderRequest.ProductOrderRequest orderRequest : productOrderRequests) {
             Product product = products.stream()
                     .filter(p -> p.id().equals(orderRequest.id()))
@@ -29,7 +29,9 @@ public class ProductUpdater {
 
             Product decreasedProduct = product.decreaseStock(orderRequest.quantity());
             productRepository.updateStock(decreasedProduct);
+            productList.add(decreasedProduct);
         }
 
+        return productList;
     }
 }

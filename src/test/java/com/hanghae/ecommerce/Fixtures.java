@@ -46,23 +46,27 @@ public class Fixtures {
 
     public static Order order(OrderStatus orderStatus) {
         if (orderStatus.equals(OrderStatus.READY)) {
-            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "ready", LocalDateTime.now());
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.READY.toString(), LocalDateTime.now());
         }
 
         if (orderStatus.equals(OrderStatus.COMPLETE)) {
-            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "complete", LocalDateTime.now());
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.CANCELED.toString(), LocalDateTime.now());
         }
 
         if (orderStatus.equals(OrderStatus.CANCELED)) {
-            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "canceled", LocalDateTime.now());
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.CANCELED.toString(), LocalDateTime.now());
         }
 
         if (orderStatus.equals(OrderStatus.PAID)) {
-            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "paid", LocalDateTime.now());
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAID.toString(), LocalDateTime.now());
         }
 
         if (orderStatus.equals(OrderStatus.PAY_FAILED)) {
-            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", "pay failed", LocalDateTime.now());
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAY_FAILED.toString(), LocalDateTime.now());
+        }
+
+        if (orderStatus.equals(OrderStatus.WAITING_FOR_PAY)) {
+            return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.WAITING_FOR_PAY.toString(), LocalDateTime.now());
         }
 
         throw new EntityNotFoundException("Order Not Found - order status: " + orderStatus);

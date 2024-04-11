@@ -1,60 +1,31 @@
 package com.hanghae.ecommerce.domain.user;
 
-import com.hanghae.ecommerce.Fixtures;
-import com.hanghae.ecommerce.domain.order.Order;
-import com.hanghae.ecommerce.domain.order.OrderUpdater;
-import com.hanghae.ecommerce.domain.product.ProductManager;
-import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class UserPointValidatorTest {
     private UserPointValidator userPointValidator;
-    private OrderUpdater orderUpdater;
-    private ProductManager productManager;
+    private User user;
 
     @BeforeEach
     void setUp() {
-        orderUpdater = mock(OrderUpdater.class);
-        productManager = mock(ProductManager.class);
+        user = Mockito.mock(User.class);
 
-        userPointValidator = new UserPointValidator(orderUpdater, productManager);
+        userPointValidator = new UserPointValidator();
     }
 
     @Test
-    @DisplayName("결제 금액보다 포인트가 적은 경우 에러가 발생하고, 재고 업데이트 메서드가 호출된다.")
-    void when_not_enough_point_then_failed_use_point() {
-        // Given
-        User user = Fixtures.user(1L);
-        Long payAmount = 999_999L;
-        Order order = Fixtures.order(OrderStatus.COMPLETE);
+    @DisplayName("주문 결제 시 사용자의 포인트를 검증하는 메서드가 호출되는지 테스트")
+    void when_using_user_point_for_pay_then_call_is_enough_point_for_pay() {
+        Long payAmount = 1000L;
 
-        // When && Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            userPointValidator.checkUserPointForPay(order, user, payAmount);
-        });
+        userPointValidator.checkUserPointForPay(user, payAmount);
 
-        verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
-        verify(productManager, atLeastOnce()).compensateProduct(any());
-    }
-
-    @Test
-    @DisplayName("결제 금액보다 포인트가 많은 경우 에러가 발생하지 않는다.")
-    void when_enough_point_then_succeed_use_point() {
-        // Given
-        User user = Fixtures.user(1L);
-        Long payAmount = 1_000L;
-        Order order = Fixtures.order(OrderStatus.COMPLETE);
-
-        // When
-        userPointValidator.checkUserPointForPay(order, user, payAmount);
-
-        // Then
-        assertDoesNotThrow(() -> new IllegalArgumentException());
-        verify(orderUpdater, never()).changeStatus(any(), any());
+        verify(user, times(1)).isEnoughPointForPay(payAmount);
     }
 }

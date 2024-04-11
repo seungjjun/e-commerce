@@ -11,8 +11,10 @@ public record Product(
         return price * quantity;
     }
 
-    public boolean isRemainingProductStock(Long orderQuantity) {
-        return stockQuantity >= orderQuantity;
+    public void isEnoughProductStockQuantityForOrder(Long orderQuantity) {
+        if (stockQuantity < orderQuantity) {
+            throw new IllegalArgumentException(id + " 상품의 재고가 부족합니다.");
+        }
     }
 
     public Product decreaseStock(Long quantity) {

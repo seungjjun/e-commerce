@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class ProductUpdaterTest {
@@ -35,12 +37,15 @@ class ProductUpdaterTest {
     }
 
     @Test
-    @DisplayName("주문량 만큼 상품 재고 업데이트 성공")
+    @DisplayName("재고 업데이트 메서드 호출 시 product의 재고 감소 메서드가 호출 된다.")
     void update_product_stock_for_order() {
         // Given
+        Product mockProduct1 = mock(Product.class);
+        Product mockProduct2 = mock(Product.class);
+
         List<Product> products = List.of(
-                Fixtures.product("후드티"),
-                Fixtures.product("맨투맨")
+                mockProduct1,
+                mockProduct2
         );
 
         List<OrderRequest.ProductOrderRequest> productsOrderRequest = List.of(
@@ -48,11 +53,17 @@ class ProductUpdaterTest {
                 new OrderRequest.ProductOrderRequest(2L, 10L)
         );
 
+        given(mockProduct1.id()).willReturn(1L);
+        given(mockProduct2.id()).willReturn(2L);
+
         // When
-        productUpdater.updateStockForOrder(products, productsOrderRequest);
+        List<Product> updateStockProducts = productUpdater.updateStockForOrder(products, productsOrderRequest);
 
         // Then
         verify(productRepository, atLeastOnce()).updateStock(any());
+        verify(mockProduct1, atLeastOnce()).decreaseStock(any());
+        verify(mockProduct2, atLeastOnce()).decreaseStock(any());
+        assertThat(updateStockProducts.size()).isEqualTo(2);
     }
 
 }

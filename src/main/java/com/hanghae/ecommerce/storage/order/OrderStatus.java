@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public enum OrderStatus {
-    READY("ready"),
-    PAID("paid"),
-    PAY_FAILED("pay failed"),
-    COMPLETE("complete"),
-    CANCELED("canceled");
+    READY("READY"),
+    PAID("PAID"),
+    PAY_FAILED("PAY FAILED"),
+    WAITING_FOR_PAY("WAITING FOR PAY"),
+    COMPLETE("COMPLETE"),
+    CANCELED("CANCELED");
 
     private final String value;
 
