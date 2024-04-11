@@ -1,6 +1,6 @@
 package com.hanghae.ecommerce.api.controller;
 
-import com.hanghae.ecommerce.domain.user.UserPointCoreService;
+import com.hanghae.ecommerce.domain.user.UserPointService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class AccountControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserPointCoreService userPointCoreService;
+    private UserPointService userPointService;
 
     @Test
     @DisplayName("포인트 충전 성공")
@@ -31,7 +31,7 @@ class AccountControllerTest {
         Long userId = 1L;
         Long balance = 500L;
 
-        given(userPointCoreService.chargePoint(anyLong(), anyLong())).willReturn(balance);
+        given(userPointService.chargePoint(anyLong(), anyLong())).willReturn(balance);
 
         // When && Then
         mockMvc.perform(patch("/accounts/" + userId + "/charge")
@@ -86,7 +86,7 @@ class AccountControllerTest {
         Long userId = 1L;
         Long balance = 5000L;
 
-        given(userPointCoreService.getPoint(userId)).willReturn(balance);
+        given(userPointService.getPoint(userId)).willReturn(balance);
 
         // When && Then
         mockMvc.perform(get("/accounts/" + userId + "/balance"))

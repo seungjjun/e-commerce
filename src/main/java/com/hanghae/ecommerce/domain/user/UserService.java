@@ -3,7 +3,7 @@ package com.hanghae.ecommerce.domain.user;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserCoreService {
+public class UserService {
 
     private final UserReader userReader;
 
@@ -11,7 +11,6 @@ public class UserService implements UserCoreService {
         this.userReader = userReader;
     }
 
-    @Override
     public User getUser(Long userId) {
         return userReader.readById(userId);
     }

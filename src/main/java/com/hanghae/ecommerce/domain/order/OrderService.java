@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class OrderService implements OrderCoreService {
+public class OrderService {
 
     private final OrderItemAppender orderItemAppender;
     private final OrderProcessor orderProcessor;
@@ -23,7 +23,6 @@ public class OrderService implements OrderCoreService {
         this.orderUpdater = orderUpdater;
     }
 
-    @Override
     public Order order(User user, List<Product> products, OrderRequest request) {
         Order order = orderProcessor.order(user, request);
 

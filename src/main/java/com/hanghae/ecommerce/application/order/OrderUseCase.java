@@ -4,13 +4,13 @@ import com.hanghae.ecommerce.api.dto.OrderEventForStatistics;
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.order.Order;
-import com.hanghae.ecommerce.domain.order.OrderCoreService;
+import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.payment.Payment;
-import com.hanghae.ecommerce.domain.payment.PaymentCoreService;
+import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
-import com.hanghae.ecommerce.domain.product.ProductCoreService;
+import com.hanghae.ecommerce.domain.product.ProductService;
 import com.hanghae.ecommerce.domain.user.User;
-import com.hanghae.ecommerce.domain.user.UserCoreService;
+import com.hanghae.ecommerce.domain.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +20,17 @@ import java.util.List;
 @Component
 public class OrderUseCase {
 
-    private final UserCoreService userService;
-    private final ProductCoreService productService;
-    private final OrderCoreService orderService;
-    private final PaymentCoreService paymentService;
+    private final UserService userService;
+    private final ProductService productService;
+    private final OrderService orderService;
+    private final PaymentService paymentService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderUseCase(UserCoreService userService,
-                        ProductCoreService productService,
-                        OrderCoreService orderService,
-                        PaymentCoreService paymentService, ApplicationEventPublisher applicationEventPublisher) {
+    public OrderUseCase(UserService userService,
+                        ProductService productService,
+                        OrderService orderService,
+                        PaymentService paymentService,
+                        ApplicationEventPublisher applicationEventPublisher) {
         this.userService = userService;
         this.productService = productService;
         this.orderService = orderService;

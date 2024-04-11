@@ -5,16 +5,12 @@ import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.order.Order;
-import com.hanghae.ecommerce.domain.order.OrderCoreService;
 import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.payment.Payment;
-import com.hanghae.ecommerce.domain.payment.PaymentCoreService;
 import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
-import com.hanghae.ecommerce.domain.product.ProductCoreService;
 import com.hanghae.ecommerce.domain.product.ProductService;
 import com.hanghae.ecommerce.domain.user.User;
-import com.hanghae.ecommerce.domain.user.UserCoreService;
 import com.hanghae.ecommerce.domain.user.UserService;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +27,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 class OrderUseCaseUnitTest {
-    private UserCoreService userService;
-    private ProductCoreService productService;
-    private OrderCoreService orderService;
-    private PaymentCoreService paymentService;
+    private UserService userService;
+    private ProductService productService;
+    private OrderService orderService;
+    private PaymentService paymentService;
     private ApplicationEventPublisher applicationEventPublisher;
 
     private OrderUseCase orderUseCase;
