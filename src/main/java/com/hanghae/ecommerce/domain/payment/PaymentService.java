@@ -11,7 +11,7 @@ import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PaymentService implements PaymentCoreService {
+public class PaymentService {
 
     private final OrderUpdater orderUpdater;
     private final OrderValidator orderValidator;
@@ -30,7 +30,6 @@ public class PaymentService implements PaymentCoreService {
         this.userPointValidator = userPointValidator;
     }
 
-    @Override
     public Payment pay(User user, Order order, OrderRequest request) {
         if (!orderValidator.isOrderStatusWaitingForPay(order)) {
             throw new IllegalArgumentException("결제 대기 상태가 아닙니다. order status : " + order.orderStatus());

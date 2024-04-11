@@ -4,7 +4,7 @@ import com.hanghae.ecommerce.api.dto.response.ProductDetailResponse;
 import com.hanghae.ecommerce.api.dto.response.ProductListResponse;
 import com.hanghae.ecommerce.api.dto.response.ProductSummaryResponse;
 import com.hanghae.ecommerce.domain.product.Product;
-import com.hanghae.ecommerce.domain.product.ProductCoreService;
+import com.hanghae.ecommerce.domain.product.ProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +16,9 @@ import java.util.List;
 @RestController
 @RequestMapping("products")
 public class ProductController {
-    private final ProductCoreService productService;
+    private final ProductService productService;
 
-    public ProductController(ProductCoreService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
