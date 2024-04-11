@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class OrderUseCaseTest {
+class OrderUseCaseUnitTest {
     private UserCoreService userService;
     private ProductCoreService productService;
     private OrderCoreService orderService;
