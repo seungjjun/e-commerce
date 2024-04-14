@@ -5,24 +5,23 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-class ProductValidatorTest {
-    private ProductValidator productValidator;
-    private Product product;
+class StockValidatorTest {
+    private StockValidator stockValidator;
+    private Stock stock;
 
     @BeforeEach
     void setUp() {
-        productValidator = new ProductValidator();
-        product = Mockito.mock(Product.class);
+        stock = mock(Stock.class);
+
+        stockValidator = new StockValidator();
     }
 
     @Test
@@ -33,13 +32,13 @@ class ProductValidatorTest {
         OrderRequest.ProductOrderRequest productOrderRequest = new OrderRequest.ProductOrderRequest(1L, quantity);
         List<OrderRequest.ProductOrderRequest> productsOrderRequest = List.of(productOrderRequest);
 
-        given(product.id()).willReturn(1L);
+        given(stock.productId()).willReturn(1L);
 
         // When
-        productValidator.checkProductStockQuantityForOrder(List.of(product), productsOrderRequest);
+        stockValidator.checkProductStockQuantityForOrder(List.of(stock), productsOrderRequest);
 
         // Then
-        verify(product, times(1)).isEnoughProductStockQuantityForOrder(quantity);
+        verify(stock, times(1)).isEnoughProductStockQuantityForOrder(quantity);
     }
 
     @Test
@@ -50,11 +49,12 @@ class ProductValidatorTest {
         OrderRequest.ProductOrderRequest productOrderRequest = new OrderRequest.ProductOrderRequest(1L, quantity);
         List<OrderRequest.ProductOrderRequest> productsOrderRequest = List.of(productOrderRequest);
 
-        given(product.id()).willReturn(2L);
+        given(stock.productId()).willReturn(2L);
 
         // When & Then
         assertThrows(EntityNotFoundException.class, () -> {
-            productValidator.checkProductStockQuantityForOrder(Collections.singletonList(product), productsOrderRequest);
+            stockValidator.checkProductStockQuantityForOrder(Collections.singletonList(stock), productsOrderRequest);
         });
     }
+
 }

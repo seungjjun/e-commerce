@@ -5,6 +5,13 @@ insert into products (name, price, description, stock_quantity, created_at, upda
 insert into products (name, price, description, stock_quantity, created_at, updated_at) values ('후드집업', 25000, '기모 후드집업', 10, '2024-04-03 12:00:00', '2024-04-03 12:00:00');
 insert into products (name, price, description, stock_quantity, created_at, updated_at) values ('반팔', 15000, '오버핏 반팔', 50, '2024-04-03 13:00:00', '2024-04-03 13:00:00');
 
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (1, 5, '2024-03-01 12:00:00', '2024-03-01 12:00:00');
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (2, 10, '2024-03-02 12:00:00', '2024-03-02 12:00:00');
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (3, 3, '2024-04-01 12:00:00', '2024-04-01 12:00:00');
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (4, 100, '2024-04-02 12:00:00', '2024-04-02 12:00:00');
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (5, 10, '2024-04-03 12:00:00', '2024-04-03 12:00:00');
+insert into product_stocks (product_id, stock_quantity, created_at, updated_at) values (6, 50, '2024-04-03 13:00:00', '2024-04-03 13:00:00');
+
 insert into users (name, address, phone_number, point, created_at, updated_at) values ('홍길동', '서울시 송파구', '01012345678', 5000, '2024-04-08 12:00:00', '2024-04-08 12:00:00');
 
 insert into orders (user_id, pay_amount, receiver_name, address, phone_number, order_status, ordered_at, created_at, updated_at) values (1, 126000, '홍길동', '서울시 송파구', '01012345678', 'PAID', '2024-04-09 20:00:00', '2024-04-09 20:00:00', '2024-04-09 20:00:00');

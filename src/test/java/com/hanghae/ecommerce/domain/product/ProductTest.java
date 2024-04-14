@@ -23,44 +23,32 @@ class ProductTest {
     }
 
     @Test
-    @DisplayName("상품 재고가 충분한 경우 에러가 발생하지 않는다")
-    void when_enough_stock_quantity_then_return_true() {
+    @DisplayName("상품의 재고를 업데이트 한다.")
+    void update_product_stock() {
         // Given
         Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 5L);
-        Long orderQuantity = 3L;
 
-        // When && Then
-        assertDoesNotThrow(() -> {
-            product.isEnoughProductStockQuantityForOrder(orderQuantity);
-        });
+        Long stockQuantity = 3L;
+
+        // When
+        Product updatedProduct = product.updateStock(stockQuantity);
+
+        // Then
+        assertThat(updatedProduct.stockQuantity()).isEqualTo(3L);
     }
 
     @Test
-    @DisplayName("상품 재고가 부족한 경우 에러가 발생한다.")
-    void when_not_enough_stock_quantity_then_return_false() {
+    @DisplayName("상품의 재고를 감소시킨다.")
+    void decrease_product_stock_quantity() {
         // Given
-        Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 1L);
-        Long orderQuantity = 100L;
+        Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 5L);
+
+        Long stockQuantity = 3L;
 
         // When
+        Product decreasedStock = product.decreaseStock(stockQuantity);
 
         // Then
-        assertThrows(IllegalArgumentException.class, () -> {
-            product.isEnoughProductStockQuantityForOrder(orderQuantity);
-        });
-    }
-
-    @Test
-    @DisplayName("상품 재고를 감소한다")
-    void decrease_stock() {
-        // Given
-        Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 3L);
-        Long orderStockQuantity = 2L;
-
-        // When
-        Product decreasedProduct = product.decreaseStock(orderStockQuantity);
-
-        // Then
-        assertThat(decreasedProduct.stockQuantity()).isEqualTo(3L - 2L);
+        assertThat(decreasedStock.stockQuantity()).isEqualTo(5L - 3L);
     }
 }
