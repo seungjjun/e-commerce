@@ -1,4 +1,4 @@
-package com.hanghae.ecommerce.api;
+package com.hanghae.ecommerce.api.eventlistener;
 
 import com.hanghae.ecommerce.api.dto.OrderEventForStatistics;
 import lombok.extern.log4j.Log4j2;

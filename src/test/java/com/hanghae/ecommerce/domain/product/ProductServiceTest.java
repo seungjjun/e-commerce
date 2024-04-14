@@ -2,7 +2,6 @@ package com.hanghae.ecommerce.domain.product;
 
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
-import com.hanghae.ecommerce.api.dto.request.Receiver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,16 +17,14 @@ import static org.mockito.Mockito.mock;
 class ProductServiceTest {
     private ProductService productService;
     private ProductReader productReader;
-    private ProductValidator productValidator;
-    private ProductUpdater productUpdater;
+    private ProductUpdator productUpdator;
 
     @BeforeEach
     void setUp() {
         productReader = mock(ProductReader.class);
-        productValidator = mock(ProductValidator.class);
-        productUpdater = mock(ProductUpdater.class);
+        productUpdator = mock(ProductUpdator.class);
 
-        productService = new ProductService(productReader, productValidator, productUpdater);
+        productService = new ProductService(productReader, productUpdator);
     }
 
     @Test
@@ -109,42 +106,5 @@ class ProductServiceTest {
         assertThat(products.size()).isEqualTo(3);
         assertThat(products.getFirst().name()).isEqualTo("백팩");
         assertThat(products.getLast().name()).isEqualTo("모자");
-    }
-
-    @Test
-    @DisplayName("상품 재고를 감소시킨다.")
-    void decreaseProductStockQuantity() {
-        // Given
-        List<Product> products = List.of(
-                Fixtures.product("후드티"),
-                Fixtures.product("슬랙스")
-        );
-
-        OrderRequest request = new OrderRequest(
-                new Receiver(
-                        "홍길동",
-                        "서울 송파",
-                        "01012345678"
-                ),
-                List.of(
-                        new OrderRequest.ProductOrderRequest(1L, 1L),
-                        new OrderRequest.ProductOrderRequest(3L, 10L)
-                ),
-                50_000L,
-                "CARD"
-        );
-
-        given(productUpdater.updateStockForOrder(anyList(), anyList())).willReturn(List.of(
-                Fixtures.product("후드티").decreaseStock(request.products().get(0).quantity()),
-                Fixtures.product("슬랙스").decreaseStock(request.products().get(1).quantity())
-        ));
-
-        // When
-        List<Product> decreasedProducts = productService.decreaseStock(products, request);
-
-        // Then
-        assertThat(decreasedProducts.size()).isEqualTo(2);
-        assertThat(decreasedProducts.getFirst().stockQuantity()).isEqualTo(5 - 1);
-        assertThat(decreasedProducts.getLast().stockQuantity()).isEqualTo(100 - 10);
     }
 }

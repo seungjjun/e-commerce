@@ -8,13 +8,11 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductReader productReader;
-    private final ProductValidator productValidator;
-    private final ProductUpdater productUpdater;
+    private final ProductUpdator productUpdator;
 
-    public ProductService(ProductReader productReader, ProductValidator productValidator, ProductUpdater productUpdater) {
+    public ProductService(ProductReader productReader, ProductUpdator productUpdator) {
         this.productReader = productReader;
-        this.productValidator = productValidator;
-        this.productUpdater = productUpdater;
+        this.productUpdator = productUpdator;
     }
 
     public List<Product> getProducts() {
@@ -33,8 +31,7 @@ public class ProductService {
         return productReader.readAllByIds(products);
     }
 
-    public List<Product> decreaseStock(List<Product> products, OrderRequest request) {
-        productValidator.checkProductStockQuantityForOrder(products, request.products());
-        return productUpdater.updateStockForOrder(products, request.products());
+    public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> request) {
+        productUpdator.updateStock(products, request);
     }
 }

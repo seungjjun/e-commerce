@@ -5,11 +5,7 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.orderitem.OrderItemAppender;
 import com.hanghae.ecommerce.domain.product.Product;
-import com.hanghae.ecommerce.domain.product.ProductReader;
-import com.hanghae.ecommerce.domain.product.ProductUpdater;
-import com.hanghae.ecommerce.domain.product.ProductValidator;
 import com.hanghae.ecommerce.domain.user.User;
-import com.hanghae.ecommerce.domain.user.UserReader;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 

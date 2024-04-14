@@ -10,6 +10,7 @@ import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
+import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.mock;
 class OrderUseCaseUnitTest {
     private UserService userService;
     private ProductService productService;
+    private StockService stockService;
     private OrderService orderService;
     private PaymentService paymentService;
     private ApplicationEventPublisher applicationEventPublisher;
@@ -39,11 +41,12 @@ class OrderUseCaseUnitTest {
     void setUp() {
         userService = mock(UserService.class);
         productService = mock(ProductService.class);
+        stockService = mock(StockService.class);
         orderService = mock(OrderService.class);
         paymentService = mock(PaymentService.class);
         applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
-        orderUseCase = new OrderUseCase(userService, productService, orderService, paymentService, applicationEventPublisher);
+        orderUseCase = new OrderUseCase(userService, productService, stockService, orderService, paymentService, applicationEventPublisher);
     }
 
     @Test

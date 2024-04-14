@@ -4,6 +4,7 @@ import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.orderitem.OrderItem;
 import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.product.Product;
+import com.hanghae.ecommerce.domain.product.Stock;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 import com.hanghae.ecommerce.storage.payment.PayType;
@@ -90,5 +91,16 @@ public class Fixtures {
         }
 
         throw new EntityNotFoundException("Payment Not Found - order id: " + orderId);
+    }
+
+    public static Stock stock(Long productId) {
+        if (productId.equals(1L)) {
+            return new Stock(1L, 1L, 5L);
+        }
+
+        if (productId.equals(2L)) {
+            return new Stock(2L, 2L, 10L);
+        }
+        throw new EntityNotFoundException("Product Stock Not Found - stock id: " + productId);
     }
 }
