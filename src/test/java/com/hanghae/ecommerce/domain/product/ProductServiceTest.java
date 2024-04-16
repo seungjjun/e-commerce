@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.product;
 
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.domain.cart.NewCartItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,13 +19,15 @@ class ProductServiceTest {
     private ProductService productService;
     private ProductReader productReader;
     private ProductUpdator productUpdator;
+    private ProductValidator productValidator;
 
     @BeforeEach
     void setUp() {
         productReader = mock(ProductReader.class);
         productUpdator = mock(ProductUpdator.class);
+        productValidator = mock(ProductValidator.class);
 
-        productService = new ProductService(productReader, productUpdator);
+        productService = new ProductService(productReader, productUpdator, productValidator);
     }
 
     @Test
@@ -99,8 +102,10 @@ class ProductServiceTest {
                 new OrderRequest.ProductOrderRequest(5L, 50L)
         );
 
+        List<Long> productIds = orderRequests.stream().map(OrderRequest.ProductOrderRequest::id).toList();
+
         // When
-        List<Product> products = productService.getProductsByIds(orderRequests);
+        List<Product> products = productService.getProductsByIds(productIds);
 
         // Then
         assertThat(products.size()).isEqualTo(3);

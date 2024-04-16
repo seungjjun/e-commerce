@@ -2,11 +2,13 @@ package com.hanghae.ecommerce.domain.product;
 
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.storage.product.ProductEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +52,7 @@ class ProductReaderTest {
 
         Product product = Fixtures.product("맨투맨");
 
-        given(productRepository.findById(any())).willReturn(product);
+        given(productRepository.findById(any())).willReturn(Optional.of(new ProductEntity(product.name(), product.price(), product.description(), product.stockQuantity())));
 
         // When
         Product foundProduct = productReader.readById(productId);
@@ -74,10 +76,12 @@ class ProductReaderTest {
                 Fixtures.product("맨투맨")
         );
 
+        List<Long> productIds = productOrderRequests.stream().map(OrderRequest.ProductOrderRequest::id).toList();
+
         given(productRepository.findByIdIn(any())).willReturn(products);
 
         // When
-        List<Product> foundProducts = productReader.readAllByIds(productOrderRequests);
+        List<Product> foundProducts = productReader.readAllByIds(productIds);
 
         // Then
         assertThat(foundProducts).isNotNull();
