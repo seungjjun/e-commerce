@@ -1,35 +1,35 @@
 package com.hanghae.ecommerce.storage.product;
 
-import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.domain.product.Product;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class ProductCoreRepositoryTest {
+    @Autowired
     private ProductCoreRepository productCoreRepository;
 
-    private ProductJpaRepository productJpaRepository;
-
-    @BeforeEach
-    void setUp() {
-        productJpaRepository = mock(ProductJpaRepository.class);
-
-        productCoreRepository = new ProductCoreRepository(productJpaRepository);
-    }
-
     @Test
-    @DisplayName("상품을 찾지 못했을 경우 에러가 발생한다.")
-    void when_not_found_product_then_error() {
-        // Given
-        Long productId = 999L;
+    @Transactional
+    @DisplayName("상품 조회, 업데이트, 재고 확인을 통합 테스트")
+    void testProductLifecycle() {
+        // 상품 조회
+        Long productId = 1L;
+        Product product = productCoreRepository.findById(productId).get().toProduct();
+        assertThat(product.name()).isEqualTo("후드티");
+        assertThat(product.stockQuantity()).isEqualTo(5L);
 
-        // When && Then
-        assertThrows(EntityNotFoundException.class, () -> {
-            productCoreRepository.findById(productId);
-        });
+        // 재고 업데이트
+        Product updatedStock = product.updateStock(3L);
+        productCoreRepository.updateStock(updatedStock);
+
+        // 업데이트된 재고 확인
+        product = productCoreRepository.findById(productId).get().toProduct();
+        assertThat(product.stockQuantity()).isEqualTo(3L);
     }
-
 }

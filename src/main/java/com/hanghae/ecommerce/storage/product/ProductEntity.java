@@ -26,6 +26,13 @@ public class ProductEntity extends BaseEntity {
     @Column(name = "stock_quantity")
     private Long stockQuantity;
 
+    public ProductEntity(String name, Long price, String description, Long stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.stockQuantity = stockQuantity;
+    }
+
     public Product toProduct() {
         return new Product(getId(), name, price, description, stockQuantity);
     }

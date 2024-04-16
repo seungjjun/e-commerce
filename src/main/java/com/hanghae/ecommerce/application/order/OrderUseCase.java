@@ -14,7 +14,6 @@ import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.product.event.ProductStockChangedEvent;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +47,11 @@ public class OrderUseCase {
     @Transactional
     public OrderPaidResult order(Long userId, OrderRequest request) {
         User user = userService.getUser(userId);
-        List<Product> products = productService.getProductsByIds(request.products());
+        List<Product> products = productService.getProductsByIds(request.products().stream()
+                        .map(OrderRequest.ProductOrderRequest::id)
+                        .toList()
+        );
+
         List<Stock> stocks = stockService.getStocksByProductIds(products);
 
         Order order = orderService.order(user, products, request);

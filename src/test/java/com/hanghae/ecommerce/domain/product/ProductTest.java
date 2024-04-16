@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProductTest {
@@ -50,5 +49,19 @@ class ProductTest {
 
         // Then
         assertThat(decreasedStock.stockQuantity()).isEqualTo(5L - 3L);
+    }
+
+    @Test
+    @DisplayName("상품의 재고를 확인하고 부족하면 예외가 발생한다.")
+    void check_stock_quantity() {
+        // Given
+        Product product = new Product(1L, "슬랙스", 30_000L, "편한 슬랙스", 5L);
+
+        Long quantity = 10L;
+
+        // When && Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            product.isEnoughStockQuantity(quantity);
+        });
     }
 }
