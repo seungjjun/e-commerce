@@ -1,9 +1,11 @@
 package com.hanghae.ecommerce.application.cart;
 
+import com.hanghae.ecommerce.api.dto.response.CartItemResult;
 import com.hanghae.ecommerce.domain.cart.Cart;
 import com.hanghae.ecommerce.domain.cart.CartItem;
 import com.hanghae.ecommerce.domain.cart.CartService;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
+import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
@@ -22,6 +24,18 @@ public class CartUseCase {
         this.userService = userService;
         this.cartService = cartService;
         this.productService = productService;
+    }
+
+    public CartItemResult getCartItems(Long userId) {
+        User user = userService.getUser(userId);
+
+        Cart cart = cartService.getCart(user);
+
+        List<CartItem> cartItems = cartService.getAllCartItems(cart);
+
+        List<Product> products = productService.getProductsByIds(cartItems.stream().map(CartItem::productId).toList());
+
+        return CartItemResult.of(cartItems, products);
     }
 
     @Transactional
