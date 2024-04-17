@@ -1,6 +1,7 @@
 package com.hanghae.ecommerce.application.cart;
 
 import com.hanghae.ecommerce.domain.cart.Cart;
+import com.hanghae.ecommerce.domain.cart.CartItem;
 import com.hanghae.ecommerce.domain.cart.CartService;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
 import com.hanghae.ecommerce.domain.product.ProductService;
@@ -32,5 +33,16 @@ public class CartUseCase {
         productService.checkProductStockForAddToCart(cartItems);
 
         cartService.addItemToCart(cart, cartItems);
+    }
+
+    @Transactional
+    public void deleteItem(Long userId, List<Long> cartItemIds) {
+        User user = userService.getUser(userId);
+
+        Cart cart = cartService.getCart(user);
+
+        List<CartItem> cartItems = cartService.getCartItemsByIds(cart, cartItemIds);
+
+        cartService.deleteItem(cartItems);
     }
 }
