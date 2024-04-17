@@ -1,5 +1,6 @@
 package com.hanghae.ecommerce.storage.cart;
 
+import com.hanghae.ecommerce.domain.cart.CartItem;
 import com.hanghae.ecommerce.storage.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +23,8 @@ public class CartItemEntity extends BaseEntity {
     @Column(name = "quantity")
     private Long quantity;
 
+    private Boolean deleted = false;
+
     public CartItemEntity(Long cartId, Long productId, Long quantity) {
         this.cartId = cartId;
         this.productId = productId;
@@ -30,5 +33,17 @@ public class CartItemEntity extends BaseEntity {
 
     public void addQuantity(Long addedQuantity) {
         this.quantity += addedQuantity;
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
+    public CartItem toCartItem() {
+        return new CartItem(getId(), cartId, productId, quantity);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }

@@ -9,11 +9,18 @@ import java.util.List;
 public class CartService {
 
     private final CartFinder cartFinder;
+    private final CartItemFinder cartItemFinder;
     private final CartItemAppender cartItemAppender;
+    private final CartItemRemover cartItemRemover;
 
-    public CartService(CartFinder cartFinder, CartItemAppender cartItemAppender) {
+    public CartService(CartFinder cartFinder,
+                       CartItemFinder cartItemFinder,
+                       CartItemAppender cartItemAppender,
+                       CartItemRemover cartItemRemover) {
         this.cartFinder = cartFinder;
+        this.cartItemFinder = cartItemFinder;
         this.cartItemAppender = cartItemAppender;
+        this.cartItemRemover = cartItemRemover;
     }
 
     public Cart getCart(User user) {
@@ -22,5 +29,16 @@ public class CartService {
 
     public void addItemToCart(Cart cart, List<NewCartItem> newCartItem) {
         cartItemAppender.addItem(cart, newCartItem);
+    }
+
+    public List<CartItem> getCartItemsByIds(Cart cart, List<Long> cartItemIds) {
+        List<CartItem> cartItems = cartItemFinder.findAllByCartId(cart.id());
+        return cartItems.stream()
+                .filter(item -> cartItemIds.stream().anyMatch(id -> id.equals(item.id())))
+                .toList();
+    }
+
+    public void deleteItem(List<CartItem> cartItems) {
+        cartItemRemover.removeItems(cartItems);
     }
 }
