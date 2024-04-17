@@ -1,17 +1,16 @@
 package com.hanghae.ecommerce.application.order;
 
-import com.hanghae.ecommerce.api.dto.OrderEventForStatistics;
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderService;
+import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
 import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
 import com.hanghae.ecommerce.domain.product.Stock;
 import com.hanghae.ecommerce.domain.product.StockService;
-import com.hanghae.ecommerce.domain.product.event.ProductStockChangedEvent;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -60,8 +59,7 @@ public class OrderUseCase {
 
         stockService.decreaseProductStock(stocks, request);
 
-        applicationEventPublisher.publishEvent(new ProductStockChangedEvent(products, request));
-        applicationEventPublisher.publishEvent(new OrderEventForStatistics(order, payment));
+        applicationEventPublisher.publishEvent(new OrderCreatedEvent(products, request.products(), order, payment));
         return OrderPaidResult.of(order, payment);
     }
 }

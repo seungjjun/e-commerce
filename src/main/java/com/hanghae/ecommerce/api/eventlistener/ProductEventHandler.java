@@ -1,7 +1,7 @@
 package com.hanghae.ecommerce.api.eventlistener;
 
+import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
 import com.hanghae.ecommerce.domain.product.ProductService;
-import com.hanghae.ecommerce.domain.product.event.ProductStockChangedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class ProductEventHandler {
     }
 
     @EventListener
-    public void onProductStockChanged(ProductStockChangedEvent event) {
-        productService.updateStockQuantity(event.products(), event.request().products());
+    public void onProductStockChanged(OrderCreatedEvent event) {
+        productService.updateStockQuantity(event.products(), event.orderRequest());
     }
 }

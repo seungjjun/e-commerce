@@ -34,8 +34,8 @@ public class ProductService {
         return productReader.readAllByIds(productIds);
     }
 
-    public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> request) {
-        productUpdator.updateStock(products, request);
+    public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> orderRequests) {
+        productUpdator.updateStock(products, orderRequests);
     }
 
     public void checkProductStockForAddToCart(List<NewCartItem> cartItems) {
