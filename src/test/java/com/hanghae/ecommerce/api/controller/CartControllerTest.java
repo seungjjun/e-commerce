@@ -1,6 +1,10 @@
 package com.hanghae.ecommerce.api.controller;
 
+import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.api.dto.response.CartItemResult;
+import com.hanghae.ecommerce.api.dto.response.UnitCartItemResult;
 import com.hanghae.ecommerce.application.cart.CartUseCase;
+import com.hanghae.ecommerce.domain.cart.CartItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,5 +80,30 @@ class CartControllerTest {
                 .andExpect(jsonPath("$.message").value("상품이 삭제 되었습니다."));
 
         verify(cartUseCase, atLeastOnce()).deleteItem(any(), any());
+    }
+
+    @Test
+    @DisplayName("장바구니 아이템 조회")
+    void getCartItems() throws Exception {
+        // Given
+        Long userId = 1L;
+
+        CartItemResult cartItemResult = CartItemResult.of(
+                List.of(new CartItem(1L, 1L, 2L, 2L)),
+                List.of(Fixtures.product("맨투맨"))
+        );
+
+        given(cartUseCase.getCartItems(any())).willReturn(cartItemResult);
+
+        // When && Then
+        mockMvc.perform(get("/cart-items/" + userId))
+                .andExpect(status().isOk())
+                .andExpectAll(
+                        jsonPath("$.cartItems[0].productName").value("맨투맨"),
+                        jsonPath("$.cartItems[0].unitPrice").value("39000"),
+                        jsonPath("$.cartItems[0].quantity").value("2"),
+                        jsonPath("$.cartItems[0].totalPrice").value("78000"),
+                        jsonPath("$.totalPrice").value("78000")
+                );
     }
 }

@@ -1,6 +1,7 @@
 package com.hanghae.ecommerce.domain.cart;
 
 import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -65,8 +66,8 @@ class CartServiceTest {
     }
 
     @Test
-    @DisplayName("장바구니에 담긴 상품을 조회한다.")
-    void get_cart_items() {
+    @DisplayName("장바구니에 담긴 상품 중 선택한 상품만 조회한다.")
+    void get_selected_cart_items() {
         // Given
         Long userId = 1L;
         Cart cart = new Cart(1L, userId);
@@ -89,6 +90,31 @@ class CartServiceTest {
         assertThat(selectedCartItems.size()).isEqualTo(2);
         assertThat(selectedCartItems.getFirst().id()).isEqualTo(10L);
         assertThat(selectedCartItems.getLast().id()).isEqualTo(12L);
+    }
+
+    @Test
+    @DisplayName("장바구니에 담긴 모든 상품을 가져온다.")
+    void get_all_cart_items() {
+        // Given
+        Long userId = 1L;
+        Cart cart = new Cart(1L, userId);
+        Product product1 = Fixtures.product("후드티");
+        Product product2 = Fixtures.product("맨투맨");
+
+        List<CartItem> cartItems = List.of(
+                new CartItem(1L, userId, product1.id(), product1.stockQuantity()),
+                new CartItem(1L, userId, product2.id(), product2.stockQuantity())
+        );
+
+        given(cartItemFinder.findAllByCartId(any())).willReturn(cartItems);
+
+        // When
+        List<CartItem> foundCartItems = cartService.getAllCartItems(cart);
+
+        // Then
+        assertThat(foundCartItems.size()).isEqualTo(2);
+        assertThat(foundCartItems.get(0).productId()).isEqualTo(1L);
+        assertThat(foundCartItems.get(1).productId()).isEqualTo(2L);
     }
 
     @Test

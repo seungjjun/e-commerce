@@ -31,6 +31,10 @@ public class CartService {
         cartItemAppender.addItem(cart, newCartItem);
     }
 
+    public List<CartItem> getAllCartItems(Cart cart) {
+        return cartItemFinder.findAllByCartId(cart.id());
+    }
+
     public List<CartItem> getCartItemsByIds(Cart cart, List<Long> cartItemIds) {
         List<CartItem> cartItems = cartItemFinder.findAllByCartId(cart.id());
         return cartItems.stream()

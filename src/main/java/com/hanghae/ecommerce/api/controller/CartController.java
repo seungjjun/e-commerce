@@ -2,7 +2,9 @@ package com.hanghae.ecommerce.api.controller;
 
 import com.hanghae.ecommerce.api.dto.request.CartItemRequest;
 import com.hanghae.ecommerce.api.dto.request.DeleteCartItemRequest;
+import com.hanghae.ecommerce.api.dto.response.AddCartItemResponse;
 import com.hanghae.ecommerce.api.dto.response.CartItemResponse;
+import com.hanghae.ecommerce.api.dto.response.CartItemResult;
 import com.hanghae.ecommerce.api.dto.response.DeleteCartItemResponse;
 import com.hanghae.ecommerce.application.cart.CartUseCase;
 import org.springframework.http.HttpStatus;
@@ -18,17 +20,23 @@ public class CartController {
         this.cartUseCase = cartUseCase;
     }
 
+    @GetMapping("/{userId}")
+    public CartItemResponse getCartItems(@PathVariable Long userId) {
+        CartItemResult cartItemResult = cartUseCase.getCartItems(userId);
+        return CartItemResponse.from(cartItemResult);
+    }
+
     @PostMapping("/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public CartItemResponse addCartItems(@PathVariable Long userId,
-                                         @RequestBody CartItemRequest request) {
+    public AddCartItemResponse addCartItems(@PathVariable Long userId,
+                                            @RequestBody CartItemRequest request) {
         cartUseCase.addItem(userId, request.toNewCartItem());
-        return CartItemResponse.from("상품이 추가 되었습니다.");
+        return AddCartItemResponse.from("상품이 추가 되었습니다.");
     }
 
     @PostMapping("/delete/{userId}")
     public DeleteCartItemResponse deleteCartItems(@PathVariable Long userId,
-                                @RequestBody DeleteCartItemRequest request) {
+                                                  @RequestBody DeleteCartItemRequest request) {
         cartUseCase.deleteItem(userId, request.cartItemIdList());
         return DeleteCartItemResponse.from("상품이 삭제 되었습니다.");
     }

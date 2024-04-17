@@ -1,7 +1,13 @@
 package com.hanghae.ecommerce.api.dto.response;
 
-public record CartItemResponse(String message) {
-    public static CartItemResponse from(String message) {
-        return new CartItemResponse(message);
+import java.util.List;
+
+public record CartItemResponse(List<UnitCartItemResult> cartItems,
+                               Long totalPrice) {
+    public static CartItemResponse from(CartItemResult cartItemResult) {
+        return new CartItemResponse(
+                cartItemResult.cartItems(),
+                cartItemResult.totalPrice()
+        );
     }
 }
