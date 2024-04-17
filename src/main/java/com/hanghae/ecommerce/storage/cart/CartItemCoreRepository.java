@@ -20,8 +20,7 @@ public class CartItemCoreRepository implements CartItemRepository {
 
     @Override
     public Optional<CartItemEntity> findByCartIdAndProductId(Long cartId, Long productId) {
-        return cartItemJpaRepository.findByCartIdAndProductId(cartId, productId)
-                .filter(item -> !item.isDeleted());
+        return cartItemJpaRepository.findByCartIdAndProductIdAndDeletedFalse(cartId, productId);
     }
 
     @Override
