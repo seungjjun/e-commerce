@@ -6,11 +6,8 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderService;
-import com.hanghae.ecommerce.domain.payment.Payment;
-import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
-import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
@@ -30,9 +27,7 @@ import static org.mockito.Mockito.mock;
 class OrderUseCaseUnitTest {
     private UserService userService;
     private ProductService productService;
-    private StockService stockService;
     private OrderService orderService;
-    private PaymentService paymentService;
     private ApplicationEventPublisher applicationEventPublisher;
 
     private OrderUseCase orderUseCase;
@@ -41,12 +36,10 @@ class OrderUseCaseUnitTest {
     void setUp() {
         userService = mock(UserService.class);
         productService = mock(ProductService.class);
-        stockService = mock(StockService.class);
         orderService = mock(OrderService.class);
-        paymentService = mock(PaymentService.class);
         applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
-        orderUseCase = new OrderUseCase(userService, productService, stockService, orderService, paymentService, applicationEventPublisher);
+        orderUseCase = new OrderUseCase(userService, productService, orderService, applicationEventPublisher);
     }
 
     @Test
@@ -57,7 +50,6 @@ class OrderUseCaseUnitTest {
         User user = Fixtures.user(userId);
         List<Product> products = List.of(Fixtures.product("후드티"));
         Order order = Fixtures.order(OrderStatus.PAID);
-        Payment payment = Fixtures.payment(order.id());
         OrderRequest request = new OrderRequest(
                 new Receiver(
                         user.name(),
@@ -74,7 +66,6 @@ class OrderUseCaseUnitTest {
         given(userService.getUser(any())).willReturn(user);
         given(productService.getProductsByIds(anyList())).willReturn(products);
         given(orderService.order(any(), anyList(), any())).willReturn(order);
-        given(paymentService.pay(any(), any(), any())).willReturn(payment);
 
         // When
         OrderPaidResult orderPaidResult = orderUseCase.order(userId, request);
@@ -83,7 +74,6 @@ class OrderUseCaseUnitTest {
         assertThat(orderPaidResult).isNotNull();
         assertThat(orderPaidResult.orderId()).isEqualTo(1L);
         assertThat(orderPaidResult.payAmount()).isEqualTo(89_000L);
-        assertThat(orderPaidResult.paymentMethod()).isEqualTo("CARD");
     }
 
 }

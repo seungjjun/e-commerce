@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.product;
 
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class StockService {
         return stockReader.readByProductIds(products);
     }
 
-    public List<Stock> decreaseProductStock(List<Stock> stocks, OrderRequest request) {
-        stockValidator.checkProductStockQuantityForOrder(stocks, request.products());
-        return stockUpdator.updateStockForOrder(stocks, request.products());
+    public List<Stock> decreaseProductStock(List<Stock> stocks, List<OrderRequest.ProductOrderRequest> request) {
+        stockValidator.checkProductStockQuantityForOrder(stocks, request);
+        return stockUpdator.updateStockForOrder(stocks, request);
     }
 }

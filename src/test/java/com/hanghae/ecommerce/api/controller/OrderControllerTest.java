@@ -38,11 +38,8 @@ class OrderControllerTest {
 
         OrderPaidResult result = new OrderPaidResult(
                 1L,
-                1L,
                 89_000L,
                 new Receiver("홍길동", "서울특별시 송파구", "01012345678"),
-                "CARD",
-                LocalDateTime.now(),
                 LocalDateTime.now()
         );
 
@@ -72,8 +69,7 @@ class OrderControllerTest {
                 .andExpectAll(
                         jsonPath("$.receiver.name").value("홍길동"),
                         jsonPath("$.receiver.address").value("서울특별시 송파구"),
-                        jsonPath("$.payAmount").value(89_000L),
-                        jsonPath("$.paymentMethod").value("CARD")
+                        jsonPath("$.payAmount").value(89_000L)
                 );
     }
 

@@ -6,12 +6,9 @@ import java.time.format.DateTimeFormatter;
 
 public record OrderResponse(
         Long orderId,
-        Long paymentId,
         Long payAmount,
         Receiver receiver,
-        String paymentMethod,
-        String orderedAt,
-        String paidAt
+        String orderedAt
 ) {
     private final static DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -19,12 +16,9 @@ public record OrderResponse(
     public static OrderResponse from(OrderPaidResult orderPaidResult) {
         return new OrderResponse(
                 orderPaidResult.orderId(),
-                orderPaidResult.paymentId(),
                 orderPaidResult.payAmount(),
                 orderPaidResult.receiver(),
-                orderPaidResult.paymentMethod(),
-                orderPaidResult.orderedAt().format(DATE_TIME_FORMATTER),
-                orderPaidResult.paidAt().format(DATE_TIME_FORMATTER)
+                orderPaidResult.orderedAt().format(DATE_TIME_FORMATTER)
         );
     }
 }

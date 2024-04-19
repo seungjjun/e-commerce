@@ -5,14 +5,11 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
-import com.hanghae.ecommerce.domain.payment.Payment;
-import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
-import com.hanghae.ecommerce.domain.product.Stock;
-import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,26 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
+@Slf4j
 public class OrderUseCase {
 
     private final UserService userService;
     private final ProductService productService;
-    private final StockService stockService;
     private final OrderService orderService;
-    private final PaymentService paymentService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderUseCase(UserService userService,
                         ProductService productService,
-                        StockService stockService,
                         OrderService orderService,
-                        PaymentService paymentService,
                         ApplicationEventPublisher applicationEventPublisher) {
         this.userService = userService;
         this.productService = productService;
-        this.stockService = stockService;
         this.orderService = orderService;
-        this.paymentService = paymentService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -47,19 +39,14 @@ public class OrderUseCase {
     public OrderPaidResult order(Long userId, OrderRequest request) {
         User user = userService.getUser(userId);
         List<Product> products = productService.getProductsByIds(request.products().stream()
-                        .map(OrderRequest.ProductOrderRequest::id)
-                        .toList()
+                .map(OrderRequest.ProductOrderRequest::id)
+                .toList()
         );
-
-        List<Stock> stocks = stockService.getStocksByProductIds(products);
 
         Order order = orderService.order(user, products, request);
 
-        Payment payment = paymentService.pay(user, order, request);
-
-        stockService.decreaseProductStock(stocks, request);
-
-        applicationEventPublisher.publishEvent(new OrderCreatedEvent(products, request.products(), order, payment));
-        return OrderPaidResult.of(order, payment);
+        log.info("------주문 생성------");
+        applicationEventPublisher.publishEvent(new OrderCreatedEvent(user, products, request, order));
+        return OrderPaidResult.from(order);
     }
 }

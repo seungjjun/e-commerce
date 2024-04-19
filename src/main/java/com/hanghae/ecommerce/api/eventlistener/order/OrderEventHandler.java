@@ -1,7 +1,7 @@
-package com.hanghae.ecommerce.api.eventlistener;
+package com.hanghae.ecommerce.api.eventlistener.order;
 
 import com.hanghae.ecommerce.domain.order.Order;
-import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
+import com.hanghae.ecommerce.domain.order.event.OrderPaidEvent;
 import com.hanghae.ecommerce.domain.payment.Payment;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MediaType;
@@ -17,7 +17,7 @@ public class OrderEventHandler {
     private final OkHttpClient client = new OkHttpClient();
 
     @EventListener
-    public void orderEventHandler(OrderCreatedEvent event) {
+    public void orderEventHandler(OrderPaidEvent event) {
         String url = "https://mockapi.com";
 
         Order order = event.order();
