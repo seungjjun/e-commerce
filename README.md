@@ -16,6 +16,7 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
     - [잔액 충전 및 조회](#시퀀스-다이어그램-잔액-충전-및-조회)
     - [주문 및 결제](#시퀀스-다이어그램-주문-및-결제)
 - [Swagger API Docs](#swagger-api-docs)
+- [프로젝트 회고](#프로젝트-회고)
 
 
 ## [마일스톤](https://github.com/seungjjun/e-commerce/milestones)
@@ -266,3 +267,7 @@ HTTP Status Code | Description
 ### Swagger Api Docs
 
 <img width="800" alt="image" src="https://github.com/seungjjun/e-commerce/assets/104769120/dbec503f-ccf0-4096-a43d-49b87b08f434">
+
+# 프로젝트 회고
+- [프로젝트 회고 글](https://seungjjun.tistory.com/329)
+- [주문 결제 시스템 이벤트 기반 아키텍처 전환 관련 트러블 슈팅](https://seungjjun.tistory.com/328)
