@@ -4,6 +4,8 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
 
 # 목차
 - [마일스톤](#마일스톤)
+- [Git branch 전략](#git-branch-전략)
+  - [서버 환경](#서버-환경-분리)
 - [ERD](#erd)
 - [API 명세](#api-명세)
     - [상품 리스트 조회 API](#상품-리스트-조회-api)
@@ -21,6 +23,16 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
 
 ## [마일스톤](https://github.com/seungjjun/e-commerce/milestones)
 - [Roadmap](https://github.com/users/seungjjun/projects/4/views/4)
+
+# Git branch 전략
+
+## 서버 환경 분리
+`dev` : 자유롭게 기능 개발을 위한 개발 환경
+
+`prod` : 실제 서비스가 운영되는 환경
+
+&#43; `staging` : 실제 운영 환경과 동일한 환경에서 QA 하기 위한 테스트 환경
+
 
 # ERD
 
