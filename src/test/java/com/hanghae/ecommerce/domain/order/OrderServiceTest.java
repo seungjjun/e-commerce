@@ -13,61 +13,74 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class OrderServiceTest {
-    private OrderService orderService;
-    private OrderItemAppender orderItemAppender;
-    private OrderProcessor orderProcessor;
-    private OrderUpdater orderUpdater;
+	private OrderService orderService;
+	private OrderItemAppender orderItemAppender;
+	private OrderProcessor orderProcessor;
+	private OrderUpdater orderUpdater;
 
-    private User user;
-    private OrderRequest request;
+	private User user;
+	private OrderRequest request;
 
-    @BeforeEach
-    void setUp() {
-        orderItemAppender = mock(OrderItemAppender.class);
-        orderProcessor = mock(OrderProcessor.class);
-        orderUpdater = mock(OrderUpdater.class);
+	@BeforeEach
+	void setUp() {
+		orderItemAppender = mock(OrderItemAppender.class);
+		orderProcessor = mock(OrderProcessor.class);
+		orderUpdater = mock(OrderUpdater.class);
 
-        orderService = new OrderService(orderItemAppender, orderProcessor, orderUpdater);
+		orderService = new OrderService(orderItemAppender, orderProcessor, orderUpdater);
 
-        user = Fixtures.user(1L);
-        request = new OrderRequest(
-                new Receiver(
-                        user.name(),
-                        user.address(),
-                        user.phoneNumber()
-                ),
-                List.of(
-                        new OrderRequest.ProductOrderRequest(1L, 1L)
-                ),
-                50_000L,
-                "CARD"
-        );
-    }
+		user = Fixtures.user(1L);
+		request = new OrderRequest(
+				new Receiver(
+						user.name(),
+						user.address(),
+						user.phoneNumber()
+				),
+				List.of(
+						new OrderRequest.ProductOrderRequest(1L, 1L)
+				),
+				50_000L,
+				"CARD"
+		);
+	}
 
-    @Test
-    @DisplayName("주문 생성 성공 - 주문 상태 waiting for pay")
-    void when_succeed_order_then_order_status_is_complete() {
-        // Given
-        List<Product> products = List.of();
-        Order readyOrder = Fixtures.order(OrderStatus.READY);
-        Order waitingForPayOrder = Fixtures.order(OrderStatus.WAITING_FOR_PAY);
+	@Test
+	@DisplayName("주문 생성 성공 - 주문 상태 waiting for pay")
+	void when_succeed_order_then_order_status_is_complete() {
+		// Given
+		List<Product> products = List.of();
+		Order readyOrder = Fixtures.order(OrderStatus.READY);
+		Order waitingForPayOrder = Fixtures.order(OrderStatus.WAITING_FOR_PAY);
 
-        given(orderProcessor.order(any(), any())).willReturn(readyOrder);
-        given(orderUpdater.changeStatus(any(), any())).willReturn(waitingForPayOrder);
+		given(orderProcessor.order(any(), any())).willReturn(readyOrder);
+		given(orderUpdater.changeStatus(any(), any())).willReturn(waitingForPayOrder);
 
-        // When
-        Order order = orderService.order(user, products, request);
+		// When
+		Order order = orderService.order(user, products, request);
 
-        // Then
-        assertThat(order).isNotNull();
-        assertThat(order.payAmount()).isEqualTo(89_000L);
-        assertThat(order.orderStatus()).isEqualTo("WAITING FOR PAY");
-        verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
-    }
+		// Then
+		assertThat(order).isNotNull();
+		assertThat(order.payAmount()).isEqualTo(89_000L);
+		assertThat(order.orderStatus()).isEqualTo("WAITING FOR PAY");
+		verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
+	}
+
+	@Test
+	@DisplayName("주문 상태를 업데이트 한다.")
+	void change_order_status() {
+		// Given
+		Order readyOrder = Fixtures.order(OrderStatus.READY);
+
+		// When
+		orderService.updateOrderStatus(readyOrder, OrderStatus.PAY_FAILED);
+
+		// Then
+		verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
+	}
 }

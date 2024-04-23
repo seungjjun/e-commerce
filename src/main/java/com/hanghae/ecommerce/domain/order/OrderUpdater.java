@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderUpdater {
-    private final OrderRepository orderRepository;
+	private final OrderRepository orderRepository;
 
-    public OrderUpdater(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
+	public OrderUpdater(OrderRepository orderRepository) {
+		this.orderRepository = orderRepository;
+	}
 
-    public Order changeStatus(Order order, OrderStatus orderStatus) {
-        Order changedStatusOrder = order.changeStatus(orderStatus);
-        return orderRepository.updateStatus(changedStatusOrder, orderStatus);
-    }
+	public Order changeStatus(Order order, OrderStatus orderStatus) {
+		Order changedStatusOrder = order.changeStatus(orderStatus);
+		return orderRepository.updateStatus(changedStatusOrder, orderStatus);
+	}
 }
