@@ -13,4 +13,8 @@ FROM openjdk:21-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar e-commerce.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "e-commerce.jar"]
+
+# default profile is dev
+ENV SPRING_PROFILES_ACTIVE=dev
+
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "e-commerce.jar"]
