@@ -67,3 +67,19 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ steps.build-env.outputs.image_tag_version }}
+
+      - name: Render ECS Task Definition
+        id: render-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1.1.3
+        with:
+          task-definition: ./src/main/resources/e-commerce-prod.json
+          container-name: ${{ secrets.ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-env.outputs.image_tag_version }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          service: ${{ secrets.ECS_CLUSTER_SERVICE_NAME }}
+          wait-for-service-stability: true
