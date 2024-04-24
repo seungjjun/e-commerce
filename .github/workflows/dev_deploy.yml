@@ -27,7 +27,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_NAME }}
-          role-session-name: playground-build
+          role-session-name: github-actions-deployment-dev
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Cache Gradle packages
@@ -44,6 +44,7 @@ jobs:
         run: ./gradlew clean build -x test
 
       - name: Login to Amazon ECR
+        if: success()
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
@@ -64,3 +65,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ steps.build-env.outputs.image_tag_version }}
+          build-args: SPRING_PROFILES_ACTIVE=dev
