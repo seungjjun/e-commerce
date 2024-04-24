@@ -22,3 +22,10 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /
