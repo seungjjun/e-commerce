@@ -1,9 +1,9 @@
-name: Dev CD Pipeline
+name: Prod CD Pipeline
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   build:
@@ -41,7 +41,10 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew build
+
+      - name: Test
+        run: ./gradlew test
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -51,7 +54,7 @@ jobs:
         id: build-env
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.DEV_ECR_REPOSITORY }}
+          ECR_REPOSITORY: ${{ secrets.PROD_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "::set-output name=image_tag_version::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
