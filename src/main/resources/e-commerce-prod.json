@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "e-commerce-service-prod",
-      "image": "851725648549.dkr.ecr.ap-northeast-2.amazonaws.com/e-commerce-prod:52c91add7d6a9c89fbea765771dec9193c710d01",
+      "image": "",
       "cpu": 0,
       "portMappings": [
         {
