@@ -1,44 +1,48 @@
 package com.hanghae.ecommerce.domain.product;
 
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
-import com.hanghae.ecommerce.domain.cart.NewCartItem;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.domain.cart.NewCartItem;
 
 @Service
 public class ProductService {
-    private final ProductReader productReader;
-    private final ProductUpdator productUpdator;
-    private final ProductValidator productValidator;
+	private final ProductReader productReader;
+	private final ProductUpdator productUpdator;
+	private final ProductValidator productValidator;
 
-    public ProductService(ProductReader productReader, ProductUpdator productUpdator, ProductValidator productValidator) {
-        this.productReader = productReader;
-        this.productUpdator = productUpdator;
-        this.productValidator = productValidator;
-    }
+	public ProductService(
+		ProductReader productReader,
+		ProductUpdator productUpdator,
+		ProductValidator productValidator) {
+		this.productReader = productReader;
+		this.productUpdator = productUpdator;
+		this.productValidator = productValidator;
+	}
 
-    public List<Product> getProducts() {
-        return productReader.readAll();
-    }
+	public List<Product> getProducts() {
+		return productReader.readAll();
+	}
 
-    public Product getProductDetail(Long productId) {
-        return productReader.readById(productId);
-    }
+	public Product getProductDetail(Long productId) {
+		return productReader.readById(productId);
+	}
 
-    public List<Product> getPopularProducts() {
-        return productReader.readPopularProducts();
-    }
+	public List<Product> getPopularProducts() {
+		return productReader.readPopularProducts();
+	}
 
-    public List<Product> getProductsByIds(List<Long> productIds) {
-        return productReader.readAllByIds(productIds);
-    }
+	public List<Product> getProductsByIds(List<Long> productIds) {
+		return productReader.readAllByIds(productIds);
+	}
 
-    public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> orderRequests) {
-        productUpdator.updateStock(products, orderRequests);
-    }
+	public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> orderRequests) {
+		productUpdator.updateStock(products, orderRequests);
+	}
 
-    public void checkProductStockForAddToCart(List<NewCartItem> cartItems) {
-        productValidator.checkPossibleAddToCart(cartItems);
-    }
+	public void checkProductStockForAddToCart(List<NewCartItem> cartItems) {
+		productValidator.checkPossibleAddToCart(cartItems);
+	}
 }
