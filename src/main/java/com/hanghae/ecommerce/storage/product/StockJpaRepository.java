@@ -1,12 +1,13 @@
 package com.hanghae.ecommerce.storage.product;
 
-import jakarta.persistence.LockModeType;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 
-import java.util.List;
+import jakarta.persistence.LockModeType;
 
 public interface StockJpaRepository extends JpaRepository<StockEntity, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    List<StockEntity> findByProductIdIn(List<Long> productIds);
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	List<StockEntity> findByProductIdIn(List<Long> productIds);
 }

@@ -1,5 +1,18 @@
 package com.hanghae.ecommerce.application.order;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
+
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
@@ -14,76 +27,65 @@ import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 class OrderUseCaseUnitTest {
-    private UserService userService;
-    private ProductService productService;
-    private StockService stockService;
-    private OrderService orderService;
-    private PaymentService paymentService;
-    private ApplicationEventPublisher applicationEventPublisher;
+	private UserService userService;
+	private ProductService productService;
+	private StockService stockService;
+	private OrderService orderService;
+	private PaymentService paymentService;
+	private ApplicationEventPublisher applicationEventPublisher;
 
-    private OrderUseCase orderUseCase;
+	private OrderUseCase orderUseCase;
 
-    @BeforeEach
-    void setUp() {
-        userService = mock(UserService.class);
-        productService = mock(ProductService.class);
-        stockService = mock(StockService.class);
-        orderService = mock(OrderService.class);
-        paymentService = mock(PaymentService.class);
-        applicationEventPublisher = mock(ApplicationEventPublisher.class);
+	@BeforeEach
+	void setUp() {
+		userService = mock(UserService.class);
+		productService = mock(ProductService.class);
+		stockService = mock(StockService.class);
+		orderService = mock(OrderService.class);
+		paymentService = mock(PaymentService.class);
+		applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
-        orderUseCase = new OrderUseCase(userService, productService, stockService, orderService, paymentService, applicationEventPublisher);
-    }
+		orderUseCase = new OrderUseCase(userService, productService, stockService, orderService, paymentService,
+			applicationEventPublisher);
+	}
 
-    @Test
-    @DisplayName("주문 및 결제 성공 테스트")
-    void succeed_order() {
-        // Given
-        Long userId = 1L;
-        User user = Fixtures.user(userId);
-        List<Product> products = List.of(Fixtures.product("후드티"));
-        Order order = Fixtures.order(OrderStatus.PAID);
-        Payment payment = Fixtures.payment(order.id());
-        OrderRequest request = new OrderRequest(
-                new Receiver(
-                        user.name(),
-                        user.address(),
-                        user.phoneNumber()
-                ),
-                List.of(
-                        new OrderRequest.ProductOrderRequest(1L, 1L)
-                ),
-                50_000L,
-                "CARD"
-        );
+	@Test
+	@DisplayName("주문 및 결제 성공 테스트")
+	void succeed_order() {
+		// Given
+		Long userId = 1L;
+		User user = Fixtures.user(userId);
+		List<Product> products = List.of(Fixtures.product("후드티"));
+		Order order = Fixtures.order(OrderStatus.PAID);
+		Payment payment = Fixtures.payment(order.id());
+		OrderRequest request = new OrderRequest(
+			new Receiver(
+				user.name(),
+				user.address(),
+				user.phoneNumber()
+			),
+			List.of(
+				new OrderRequest.ProductOrderRequest(1L, 1L)
+			),
+			50_000L,
+			"CARD"
+		);
 
-        given(userService.getUser(any())).willReturn(user);
-        given(productService.getProductsByIds(anyList())).willReturn(products);
-        given(orderService.order(any(), anyList(), any())).willReturn(order);
-        given(paymentService.pay(any(), any(), any())).willReturn(payment);
+		given(userService.getUser(any())).willReturn(user);
+		given(productService.getProductsByIds(anyList())).willReturn(products);
+		given(orderService.order(any(), anyList(), any())).willReturn(order);
+		given(paymentService.pay(any(), any(), any())).willReturn(payment);
 
-        // When
-        OrderPaidResult orderPaidResult = orderUseCase.order(userId, request);
+		// When
+		OrderPaidResult orderPaidResult = orderUseCase.order(userId, request);
 
-        // Then
-        assertThat(orderPaidResult).isNotNull();
-        assertThat(orderPaidResult.orderId()).isEqualTo(1L);
-        assertThat(orderPaidResult.payAmount()).isEqualTo(89_000L);
-        assertThat(orderPaidResult.paymentMethod()).isEqualTo("CARD");
-    }
+		// Then
+		assertThat(orderPaidResult).isNotNull();
+		assertThat(orderPaidResult.orderId()).isEqualTo(1L);
+		assertThat(orderPaidResult.payAmount()).isEqualTo(89_000L);
+		assertThat(orderPaidResult.paymentMethod()).isEqualTo("CARD");
+	}
 
 }

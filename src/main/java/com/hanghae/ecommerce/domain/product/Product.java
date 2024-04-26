@@ -1,27 +1,27 @@
 package com.hanghae.ecommerce.domain.product;
 
 public record Product(
-        Long id,
-        String name,
-        Long price,
-        String description,
-        Long stockQuantity
+	Long id,
+	String name,
+	Long price,
+	String description,
+	Long stockQuantity
 ) {
-    public Long orderTotalPrice(Long quantity) {
-        return price * quantity;
-    }
+	public Long orderTotalPrice(Long quantity) {
+		return price * quantity;
+	}
 
-    public Product updateStock(Long stockQuantity) {
-        return new Product(id, name, price, description, stockQuantity);
-    }
+	public Product updateStock(Long stockQuantity) {
+		return new Product(id, name, price, description, stockQuantity);
+	}
 
-    public Product decreaseStock(Long stockQuantity) {
-        return new Product(id, name, price, description, this.stockQuantity - stockQuantity);
-    }
+	public Product decreaseStock(Long stockQuantity) {
+		return new Product(id, name, price, description, this.stockQuantity - stockQuantity);
+	}
 
-    public void isEnoughStockQuantity(Long quantity) {
-        if (this.stockQuantity < quantity) {
-            throw new IllegalArgumentException("상품의 수량이 부족합니다.");
-        }
-    }
+	public void isEnoughStockQuantity(Long quantity) {
+		if (this.stockQuantity < quantity) {
+			throw new IllegalArgumentException("상품의 수량이 부족합니다.");
+		}
+	}
 }
