@@ -43,8 +43,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Test
-        run: ./gradlew test
+      - name: Test with Coverage Verification
+        run: ./gradlew jacocoTestReport jacocoTestCoverageVerification
 
       - name: Login to Amazon ECR
         if: success()
