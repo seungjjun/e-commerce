@@ -1,9 +1,9 @@
 package com.hanghae.ecommerce.storage.cart;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface CartJpaRepository extends JpaRepository<CartEntity, Long> {
-    Optional<CartEntity> findByUserId(Long userId);
+	Optional<CartEntity> findByUserId(Long userId);
 }

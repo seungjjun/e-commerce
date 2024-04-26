@@ -1,5 +1,10 @@
 package com.hanghae.ecommerce.application.cart;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.hanghae.ecommerce.api.dto.response.CartItemResult;
 import com.hanghae.ecommerce.domain.cart.Cart;
 import com.hanghae.ecommerce.domain.cart.CartItem;
@@ -9,54 +14,50 @@ import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 public class CartUseCase {
-    private final UserService userService;
-    private final CartService cartService;
-    private final ProductService productService;
+	private final UserService userService;
+	private final CartService cartService;
+	private final ProductService productService;
 
-    public CartUseCase(UserService userService, CartService cartService, ProductService productService) {
-        this.userService = userService;
-        this.cartService = cartService;
-        this.productService = productService;
-    }
+	public CartUseCase(UserService userService, CartService cartService, ProductService productService) {
+		this.userService = userService;
+		this.cartService = cartService;
+		this.productService = productService;
+	}
 
-    public CartItemResult getCartItems(Long userId) {
-        User user = userService.getUser(userId);
+	public CartItemResult getCartItems(Long userId) {
+		User user = userService.getUser(userId);
 
-        Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user);
 
-        List<CartItem> cartItems = cartService.getAllCartItems(cart);
+		List<CartItem> cartItems = cartService.getAllCartItems(cart);
 
-        List<Product> products = productService.getProductsByIds(cartItems.stream().map(CartItem::productId).toList());
+		List<Product> products = productService.getProductsByIds(cartItems.stream().map(CartItem::productId).toList());
 
-        return CartItemResult.of(cartItems, products);
-    }
+		return CartItemResult.of(cartItems, products);
+	}
 
-    @Transactional
-    public void addItem(Long userId, List<NewCartItem> cartItems) {
-        User user = userService.getUser(userId);
+	@Transactional
+	public void addItem(Long userId, List<NewCartItem> cartItems) {
+		User user = userService.getUser(userId);
 
-        Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user);
 
-        productService.checkProductStockForAddToCart(cartItems);
+		productService.checkProductStockForAddToCart(cartItems);
 
-        cartService.addItemToCart(cart, cartItems);
-    }
+		cartService.addItemToCart(cart, cartItems);
+	}
 
-    @Transactional
-    public void deleteItem(Long userId, List<Long> cartItemIds) {
-        User user = userService.getUser(userId);
+	@Transactional
+	public void deleteItem(Long userId, List<Long> cartItemIds) {
+		User user = userService.getUser(userId);
 
-        Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user);
 
-        List<CartItem> cartItems = cartService.getCartItemsByIds(cart, cartItemIds);
+		List<CartItem> cartItems = cartService.getCartItemsByIds(cart, cartItemIds);
 
-        cartService.deleteItem(cartItems);
-    }
+		cartService.deleteItem(cartItems);
+	}
 }

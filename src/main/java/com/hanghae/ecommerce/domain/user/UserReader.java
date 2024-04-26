@@ -4,13 +4,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserReader {
-    private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-    public UserReader(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	public UserReader(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
-    public User readById(Long userId) {
-        return userRepository.findById(userId);
-    }
+	public User readById(Long userId) {
+		return userRepository.findById(userId);
+	}
 }
