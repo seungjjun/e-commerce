@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.common.LockHandler;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
@@ -15,11 +16,13 @@ import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.payment.PaymentService;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
-import com.hanghae.ecommerce.domain.product.Stock;
 import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class OrderUseCase {
 
@@ -28,19 +31,24 @@ public class OrderUseCase {
 	private final StockService stockService;
 	private final OrderService orderService;
 	private final PaymentService paymentService;
+	private final LockHandler lockHandler;
 	private final ApplicationEventPublisher applicationEventPublisher;
+
+	private static final String ORDER_LOCK_PREFIX = "ORDER_";
 
 	public OrderUseCase(UserService userService,
 						ProductService productService,
 						StockService stockService,
 						OrderService orderService,
 						PaymentService paymentService,
+						LockHandler lockHandler,
 						ApplicationEventPublisher applicationEventPublisher) {
 		this.userService = userService;
 		this.productService = productService;
 		this.stockService = stockService;
 		this.orderService = orderService;
 		this.paymentService = paymentService;
+		this.lockHandler = lockHandler;
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
@@ -52,13 +60,18 @@ public class OrderUseCase {
 			.toList()
 		);
 
-		List<Stock> stocks = stockService.getStocksByProductIds(products);
+		for (OrderRequest.ProductOrderRequest orderRequest : request.products()) {
+			String key = ORDER_LOCK_PREFIX + orderRequest.id();
+			lockHandler.lock(key, 2, 1);
+			try {
+				stockService.decreaseProductStock(products, request);
+			} finally {
+				lockHandler.unlock(key);
+			}
+		}
 
 		Order order = orderService.order(user, products, request);
-
 		Payment payment = paymentService.pay(user, order, request);
-
-		stockService.decreaseProductStock(stocks, request);
 
 		applicationEventPublisher.publishEvent(new OrderCreatedEvent(products, request.products(), order, payment));
 		return OrderPaidResult.of(order, payment);

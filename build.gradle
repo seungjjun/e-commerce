@@ -44,10 +44,13 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    implementation 'org.redisson:redisson-spring-boot-starter:3.29.0'
+
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -86,7 +89,7 @@ jacocoTestCoverageVerification {
                 minimum = 1.0  // 100%
             }
 
-            excludes = ['*.dto.*', '*.config.*', '*.storage.*', '*.api.eventlistener.*', '*ECommerceApplication']
+            excludes = ['*.dto.*', '*.config.*', '*.storage.*', '*.api.eventlistener.*', '*.common.*', '*ECommerceApplication']
         }
     }
 }

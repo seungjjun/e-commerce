@@ -9,18 +9,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.common.LockHandler;
 
 class UserPointServiceTest {
 	private UserPointService userPointService;
 	private UserReader userReader;
 	private UserPointManager userPointManager;
+	private LockHandler lockHandler;
 
 	@BeforeEach
 	void setUp() {
 		userReader = mock(UserReader.class);
 		userPointManager = mock(UserPointManager.class);
+		lockHandler = mock(LockHandler.class);
 
-		userPointService = new UserPointService(userReader, userPointManager);
+		userPointService = new UserPointService(userReader, userPointManager, lockHandler);
 	}
 
 	@Test
@@ -32,7 +35,7 @@ class UserPointServiceTest {
 		User user = Fixtures.user(userId);
 
 		given(userReader.readById(userId)).willReturn(user);
-		given(userPointManager.chargePoint(user, chargingPoint))
+		given(userPointManager.chargePoint(userId, chargingPoint))
 			.willReturn(
 				new User(user.id(), user.name(), user.address(), user.phoneNumber(), user.point() + chargingPoint));
 

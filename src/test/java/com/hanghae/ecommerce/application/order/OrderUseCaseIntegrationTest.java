@@ -14,10 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.ProductService;
+import com.hanghae.ecommerce.domain.product.Stock;
+import com.hanghae.ecommerce.domain.product.StockService;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserService;
 
@@ -34,25 +37,29 @@ class OrderUseCaseIntegrationTest {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private StockService stockService;
+
 	/**
-	 * 재고가 5개인 id 값이 1인 상품을 5000원을 소지하고 있는 사용자가 동시에 5번 주문 요청을 했을 때, 정확히 5개의 재고가 감소하고 5000원이 모두 소진되는 것을 테스트 합니다.
+	 * 재고가 100개인 id 값이 1인 상품을 100,000원을 소지하고 있는 사용자가 동시에 100번 주문 요청을 했을 때,
+	 * 정확히 100개의 재고가 감소하고 100,000원이 모두 소진되는 것을 테스트 합니다.
 	 * 1. 상품 아이디 값 1 과 주문량 1을 request로 요청합니다.
-	 * 2. 동시에 5번 order 메서드 호출
+	 * 2. 동시에 100번 order 메서드 호출
 	 * 3. 사용자의 포인트가 0원 인 것을 확인합니다.
 	 * 4. 1번 상품의 재고가 0인 것을 확인합니다.
 	 *
 	 * @throws InterruptedException
 	 */
 	@Test
-	@DisplayName("주문 동시성 테스트")
-	void concurrency_order_test() throws InterruptedException {
+	@DisplayName("동시에 100건의 주문 테스트")
+	void concurrency_100orders_test() throws InterruptedException {
 		// Given
-		int numThreads = 5;
+		int numThreads = 100;
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		CountDownLatch latch = new CountDownLatch(numThreads);
 
 		Long userId = 1L;
-		Long productId = 1L;
+		Product product = Fixtures.product("후드티");
 		OrderRequest request = new OrderRequest(
 			new Receiver(
 				"홍길동",
@@ -60,7 +67,7 @@ class OrderUseCaseIntegrationTest {
 				"01012345678"
 			),
 			List.of(
-				new OrderRequest.ProductOrderRequest(productId, 1L)
+				new OrderRequest.ProductOrderRequest(product.id(), 1L)
 			),
 			1000L,
 			"CARD"
@@ -80,12 +87,12 @@ class OrderUseCaseIntegrationTest {
 		latch.await();
 		executor.shutdown();
 
-		User foundUser = userService.getUser(userId);
-		Product product = productService.getProductDetail(productId);
-
 		// Then
+		List<Stock> stocks = stockService.getStocksByProductIds(List.of(product));
+		assertThat(stocks.getFirst().stockQuantity()).isEqualTo(0);
+
+		User foundUser = userService.getUser(userId);
 		assertThat(foundUser.point()).isEqualTo(0);
-		assertThat(product.stockQuantity()).isEqualTo(0);
 	}
 
 	@Test
@@ -95,7 +102,7 @@ class OrderUseCaseIntegrationTest {
 		Long userId = 1L;
 		Long productId = 1L;
 		Long productOrderQuantity = 1L;
-		Long tooMuchProductOrderQuantity = 100L;
+		Long tooMuchProductOrderQuantity = 1000L;
 
 		OrderRequest request1 = new OrderRequest(
 			new Receiver(
@@ -127,10 +134,10 @@ class OrderUseCaseIntegrationTest {
 		orderUseCase.order(userId, request1);
 
 		Product succeedDecreaseStockProduct = productService.getProductDetail(productId);
-		assertThat(succeedDecreaseStockProduct.stockQuantity()).isEqualTo(5L - 1L);
+		assertThat(succeedDecreaseStockProduct.stockQuantity()).isEqualTo(100L - 1L);
 
 		User succeedDecreasePointUser = userService.getUser(userId);
-		assertThat(succeedDecreasePointUser.point()).isEqualTo(5000L - 1000L);
+		assertThat(succeedDecreasePointUser.point()).isEqualTo(100_000L - 1000L);
 
 		// Then
 		assertThrows(IllegalArgumentException.class, () -> {
@@ -138,7 +145,7 @@ class OrderUseCaseIntegrationTest {
 		});
 
 		Product failedDecreaseStockProduct = productService.getProductDetail(productId);
-		assertThat(failedDecreaseStockProduct.stockQuantity()).isEqualTo(4L);
+		assertThat(failedDecreaseStockProduct.stockQuantity()).isEqualTo(99L);
 	}
 
 	@Test
@@ -169,6 +176,6 @@ class OrderUseCaseIntegrationTest {
 		});
 
 		User user = userService.getUser(userId);
-		assertThat(user.point()).isEqualTo(5000L);
+		assertThat(user.point()).isEqualTo(100_000L);
 	}
 }

@@ -1,6 +1,22 @@
 spring:
-  profiles:
-    active: local
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+  datasource:
+    url: jdbc:h2:mem:test
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
 
 springdoc:
   api-docs:
@@ -22,23 +38,21 @@ spring:
     activate:
       on-profile: local
 
-  h2:
-    console:
-      enabled: true
-
   datasource:
-    url: jdbc:h2:mem:test
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/commerce
+    username: root
+    password: 'password'
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     defer-datasource-initialization: true
+    show-sql: true
 
 ---
 spring:

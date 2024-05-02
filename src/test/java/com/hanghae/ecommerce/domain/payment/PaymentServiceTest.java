@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test;
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
+import com.hanghae.ecommerce.common.LockHandler;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderUpdater;
 import com.hanghae.ecommerce.domain.order.OrderValidator;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserPointManager;
-import com.hanghae.ecommerce.domain.user.UserPointValidator;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 import com.hanghae.ecommerce.storage.payment.PayType;
 
@@ -31,7 +31,7 @@ class PaymentServiceTest {
 	private OrderValidator orderValidator;
 	private PaymentAppender paymentAppender;
 	private UserPointManager userPointManager;
-	private UserPointValidator userPointValidator;
+	private LockHandler lockHandler;
 
 	private Long userId;
 	private Long orderId;
@@ -45,10 +45,10 @@ class PaymentServiceTest {
 		orderValidator = mock(OrderValidator.class);
 		paymentAppender = mock(PaymentAppender.class);
 		userPointManager = mock(UserPointManager.class);
-		userPointValidator = mock(UserPointValidator.class);
+		lockHandler = mock(LockHandler.class);
 
 		paymentService =
-			new PaymentService(orderUpdater, orderValidator, paymentAppender, userPointManager, userPointValidator);
+			new PaymentService(orderUpdater, orderValidator, paymentAppender, userPointManager, lockHandler);
 
 		userId = 1L;
 		orderId = 1L;

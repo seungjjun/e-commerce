@@ -25,7 +25,7 @@ class ProductCoreRepositoryTest {
 		Long productId = 1L;
 		Product product = productCoreRepository.findById(productId).get().toProduct();
 		assertThat(product.name()).isEqualTo("후드티");
-		assertThat(product.stockQuantity()).isEqualTo(5L);
+		assertThat(product.stockQuantity()).isEqualTo(100L);
 
 		List<Product> products = productCoreRepository.findByIdIn(List.of(productId));
 		assertThat(products.size()).isEqualTo(1);

@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -14,12 +15,14 @@ import com.hanghae.ecommerce.Fixtures;
 class UserPointManagerTest {
 	private UserPointManager userPointManager;
 	private UserRepository userRepository;
+	private UserReader userReader;
 
 	@BeforeEach
 	void setUp() {
+		userReader = mock(UserReader.class);
 		userRepository = mock(UserRepository.class);
 
-		userPointManager = new UserPointManager(userRepository);
+		userPointManager = new UserPointManager(userReader, userRepository);
 	}
 
 	@Test
@@ -31,10 +34,11 @@ class UserPointManagerTest {
 
 		assertThat(user.point()).isEqualTo(50_000L);
 
+		given(userReader.readById(anyLong())).willReturn(user);
 		given(userRepository.updateUserPoint(any())).willReturn(user.addPoint(chargingPoint));
 
 		// When
-		User chargedUser = userPointManager.chargePoint(user, chargingPoint);
+		User chargedUser = userPointManager.chargePoint(user.id(), chargingPoint);
 
 		// Then
 		assertThat(chargedUser.point()).isEqualTo(50_000L + 20_000L);
@@ -47,6 +51,7 @@ class UserPointManagerTest {
 		User user = Fixtures.user(1L);
 		Long payAmount = 10_000L;
 
+		given(userReader.readById(anyLong())).willReturn(user);
 		given(userRepository.updateUserPoint(any())).willReturn(user.minusPoint(payAmount));
 
 		// When
