@@ -78,7 +78,7 @@ class StockServiceTest {
 		));
 
 		// When
-		List<Stock> decreaseProductStock = stockService.decreaseProductStock(stocks, request);
+		List<Stock> decreaseProductStock = stockService.decreaseProductStock(List.of(), request);
 
 		// Then
 		assertThat(decreaseProductStock.size()).isEqualTo(2);

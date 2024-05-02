@@ -42,7 +42,9 @@ class StockUpdatorTest {
 		);
 
 		given(mockStock1.productId()).willReturn(1L);
+		given(mockStock1.stockQuantity()).willReturn(5L);
 		given(mockStock2.productId()).willReturn(2L);
+		given(mockStock2.stockQuantity()).willReturn(10L);
 
 		// When
 		List<Stock> updateStockProducts = stockUpdator.updateStockForOrder(stocks, productsOrderRequest);

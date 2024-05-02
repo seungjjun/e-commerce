@@ -17,6 +17,7 @@ import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
+import com.hanghae.ecommerce.common.LockHandler;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.payment.Payment;
@@ -34,6 +35,7 @@ class OrderUseCaseUnitTest {
 	private StockService stockService;
 	private OrderService orderService;
 	private PaymentService paymentService;
+	private LockHandler lockHandler;
 	private ApplicationEventPublisher applicationEventPublisher;
 
 	private OrderUseCase orderUseCase;
@@ -45,10 +47,13 @@ class OrderUseCaseUnitTest {
 		stockService = mock(StockService.class);
 		orderService = mock(OrderService.class);
 		paymentService = mock(PaymentService.class);
+		lockHandler = mock(LockHandler.class);
 		applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
-		orderUseCase = new OrderUseCase(userService, productService, stockService, orderService, paymentService,
-			applicationEventPublisher);
+		orderUseCase =
+			new OrderUseCase(userService, productService, stockService, orderService, paymentService,
+				lockHandler,
+				applicationEventPublisher);
 	}
 
 	@Test
