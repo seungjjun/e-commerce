@@ -9,6 +9,7 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
     - [서버 환경](#서버-환경-분리)
     - [브랜치 전략](#브랜치-전략)
 - [ERD](#erd)
+- [동시성 문제 유즈케이스 및 해결](https://seungjjun.tistory.com/332)
 - [API 명세](#api-명세)
     - [상품 리스트 조회 API](#상품-리스트-조회-api)
     - [상품 상세 조회 API](#상품-상세-조회-api)
@@ -323,3 +324,4 @@ POST /orders/{userId}
 
 - [프로젝트 회고 글](https://seungjjun.tistory.com/329)
 - [주문 결제 시스템 이벤트 기반 아키텍처 전환 관련 트러블 슈팅](https://seungjjun.tistory.com/328)
+- [동시성 문제 유즈케이스 및 해결](https://seungjjun.tistory.com/332)
