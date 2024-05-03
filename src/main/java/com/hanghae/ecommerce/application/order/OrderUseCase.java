@@ -60,14 +60,13 @@ public class OrderUseCase {
 			.toList()
 		);
 
-		for (OrderRequest.ProductOrderRequest orderRequest : request.products()) {
-			String key = ORDER_LOCK_PREFIX + orderRequest.id();
-			lockHandler.lock(key, 2, 1);
-			try {
-				stockService.decreaseProductStock(products, request);
-			} finally {
-				lockHandler.unlock(key);
-			}
+		String key = createLockKey(products);
+
+		lockHandler.lock(key, 2, 1);
+		try {
+			stockService.decreaseProductStock(products, request);
+		} finally {
+			lockHandler.unlock(key);
 		}
 
 		Order order = orderService.order(user, products, request);
@@ -75,5 +74,13 @@ public class OrderUseCase {
 
 		applicationEventPublisher.publishEvent(new OrderCreatedEvent(products, request.products(), order, payment));
 		return OrderPaidResult.of(order, payment);
+	}
+
+	private String createLockKey(List<Product> products) {
+		StringBuilder key = new StringBuilder(ORDER_LOCK_PREFIX);
+		for (Product product : products) {
+			key.append(product.id());
+		}
+		return key.toString();
 	}
 }
