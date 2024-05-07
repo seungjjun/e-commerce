@@ -20,8 +20,6 @@ public class UserReader {
 	}
 
 	public User readByIdWithLock(Long userId) {
-		log.info("read Thread: {}", Thread.currentThread());
-		log.info("read Transaction: {}", TransactionSynchronizationManager.getCurrentTransactionName());
 		return userRepository.findByIdWithLock(userId);
 	}
 }
