@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 
@@ -13,7 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.domain.cart.NewCartItem;
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.storage.order.OrderStatus;
 
 class ProductServiceTest {
 	private ProductService productService;
@@ -90,26 +92,53 @@ class ProductServiceTest {
 	@DisplayName("주문 요청 상품 id 기반으로 상품 목록을 조회한다.")
 	void getOrderProductsByIds() {
 		// Given
-		given(productReader.readAllByIds(anyList())).willReturn(List.of(
+		List<Product> products = List.of(
 			Fixtures.product("백팩"),
 			Fixtures.product("후드티"),
 			Fixtures.product("모자")
-		));
-
-		List<OrderRequest.ProductOrderRequest> orderRequests = List.of(
-			new OrderRequest.ProductOrderRequest(4L, 3L),
-			new OrderRequest.ProductOrderRequest(1L, 4L),
-			new OrderRequest.ProductOrderRequest(5L, 50L)
 		);
 
-		List<Long> productIds = orderRequests.stream().map(OrderRequest.ProductOrderRequest::id).toList();
+		given(productReader.readAllByIds(anyList())).willReturn(products);
 
 		// When
-		List<Product> products = productService.getProductsByIds(productIds);
+		List<Product> productList = productService.getProductsByIds(products.stream().map(Product::id).toList());
 
 		// Then
-		assertThat(products.size()).isEqualTo(3);
-		assertThat(products.getFirst().name()).isEqualTo("백팩");
-		assertThat(products.getLast().name()).isEqualTo("모자");
+		assertThat(productList.size()).isEqualTo(3);
+		assertThat(productList.getFirst().name()).isEqualTo("백팩");
+		assertThat(productList.getLast().name()).isEqualTo("모자");
+	}
+
+	@Test
+	@DisplayName("장바구니에 상품을 담기 전 재고 검사 메서드 호출하는지 검사")
+	void before_add_to_cart_check_product_stock_quantity() {
+		// Given
+		List<NewCartItem> cartItems = List.of(
+			new NewCartItem(1L, 5L),
+			new NewCartItem(2L, 10L)
+		);
+
+		// When
+		productService.checkProductStockForAddToCart(cartItems);
+
+		// Then
+		verify(productValidator, atLeastOnce()).checkPossibleAddToCart(any());
+	}
+
+	@Test
+	@DisplayName("상품 재고를 업데이트 하는 메서드를 호출하는지 검사")
+	void verify_call_product_stock_update_method() {
+		// Given
+		Product product1 = Fixtures.product("후드티");
+		Product product2 = Fixtures.product("맨투맨");
+		List<Product> products = List.of(product1, product2);
+
+		Order order = Fixtures.order(OrderStatus.READY);
+
+		// When
+		productService.updateStockQuantity(products, order);
+
+		// Then
+		verify(productUpdator, atLeastOnce()).updateStock(anyList(), any());
 	}
 }

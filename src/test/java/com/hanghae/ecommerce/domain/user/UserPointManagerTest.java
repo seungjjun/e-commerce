@@ -51,7 +51,7 @@ class UserPointManagerTest {
 		User user = Fixtures.user(1L);
 		Long payAmount = 10_000L;
 
-		given(userReader.readById(anyLong())).willReturn(user);
+		given(userReader.readByIdWithLock(anyLong())).willReturn(user);
 		given(userRepository.updateUserPoint(any())).willReturn(user.minusPoint(payAmount));
 
 		// When

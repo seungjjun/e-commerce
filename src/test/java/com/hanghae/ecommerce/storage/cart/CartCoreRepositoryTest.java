@@ -18,14 +18,16 @@ import com.hanghae.ecommerce.domain.user.User;
 class CartCoreRepositoryTest {
 
 	private CartJpaRepository cartJpaRepository;
+	private CartItemJpaRepository cartItemJpaRepository;
 
 	private CartCoreRepository cartCoreRepository;
 
 	@BeforeEach
 	void setUp() {
 		cartJpaRepository = mock(CartJpaRepository.class);
+		cartItemJpaRepository = mock(CartItemJpaRepository.class);
 
-		cartCoreRepository = new CartCoreRepository(cartJpaRepository);
+		cartCoreRepository = new CartCoreRepository(cartJpaRepository, cartItemJpaRepository);
 	}
 
 	@Test

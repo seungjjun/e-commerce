@@ -30,8 +30,10 @@ class CartItemAppenderTest {
 	@DisplayName("이미 장바구니 추가된 상품을 추가할 경우 아이템 수량을 증가시키는 메서드가 호출된다.")
 	void when_already_added_cart_then_add_quantity_cart_item() {
 		// Given
-		Cart cart = new Cart(1L, 1L);
 		Product product = Fixtures.product("맨투맨");
+		Cart cart = new Cart(1L, 1L, List.of(
+			new CartItem(1L, product.id(), 5L)
+		));
 
 		List<NewCartItem> cartItems = List.of(
 			new NewCartItem(product.id(), 1L)
@@ -52,8 +54,10 @@ class CartItemAppenderTest {
 	@DisplayName("장바구니에 존재하지 않는 상품을 추가할 경우 장바구니 아이템을 생성한다.")
 	void when_not_exists_cart_item_then_create_cart_item() {
 		// Given
-		Cart cart = new Cart(1L, 1L);
 		Product product = Fixtures.product("맨투맨");
+		Cart cart = new Cart(1L, 1L, List.of(
+			new CartItem(1L, product.id(), 5L)
+		));
 
 		List<NewCartItem> cartItems = List.of(
 			new NewCartItem(product.id(), 1L)
@@ -71,7 +75,6 @@ class CartItemAppenderTest {
 	@Test
 	@DisplayName("장바구니에 여러 상품을 추가할 경우 해당 상품의 수 만큼 장바구니 아이템을 생성한다.")
 	void when_add_many_product_to_cart_then_call_create_cart_item() {
-		Cart cart = new Cart(1L, 1L);
 		Product product = Fixtures.product("맨투맨");
 		Product product2 = Fixtures.product("슬랙스");
 		Product product3 = Fixtures.product("백팩");
@@ -81,6 +84,12 @@ class CartItemAppenderTest {
 			new NewCartItem(product2.id(), 1L),
 			new NewCartItem(product3.id(), 1L)
 		);
+
+		Cart cart = new Cart(1L, 1L, List.of(
+			new CartItem(1L, product.id(), 5L),
+			new CartItem(2L, product2.id(), 5L),
+			new CartItem(3L, product3.id(), 5L)
+		));
 
 		given(cartItemRepository.findByCartIdAndProductId(any(), any())).willReturn(Optional.empty());
 

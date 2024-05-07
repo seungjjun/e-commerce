@@ -4,18 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-@Component
-public class CartItemRemover {
-	private final CartItemRepository cartItemRepository;
+import com.hanghae.ecommerce.domain.user.User;
 
-	public CartItemRemover(CartItemRepository cartItemRepository) {
-		this.cartItemRepository = cartItemRepository;
-	}
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class CartItemRemover {
+	private final CartRepository cartRepository;
+	private final CartItemRepository cartItemRepository;
 
 	public void removeItems(List<CartItem> cartItems) {
 		cartItemRepository.removeItems(cartItems.stream()
 			.map(CartItem::id)
 			.toList()
 		);
+	}
+
+	public void resetCart(User user) {
+		cartRepository.resetCart(user);
 	}
 }

@@ -1,4 +1,4 @@
-package com.hanghae.ecommerce.domain.orderitem;
+package com.hanghae.ecommerce.domain.order;
 
 public record OrderItem(
 	Long id,
@@ -7,6 +7,7 @@ public record OrderItem(
 	String productName,
 	Long unitPrice,
 	Long totalPrice,
-	Long quantity
+	Long quantity,
+	String status
 ) {
 }

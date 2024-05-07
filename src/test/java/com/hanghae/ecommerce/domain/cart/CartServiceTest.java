@@ -37,15 +37,21 @@ class CartServiceTest {
 	void getCart() {
 		// Given
 		User user = Fixtures.user(1L);
+		Product product = Fixtures.product("후드티");
+		Cart cart = new Cart(1L, user.id(), List.of(
+			new CartItem(1L, product.id(), 5L)
+		));
 
-		given(cartFinder.findByUserId(any())).willReturn(new Cart(1L, user.id()));
+		given(cartFinder.findByUserId(any())).willReturn(cart);
 
 		// When
-		Cart cart = cartService.getCart(user);
+		Cart foundCart = cartService.getCart(user);
 
 		// Then
-		assertThat(cart).isNotNull();
-		assertThat(cart.userId()).isEqualTo(1L);
+		assertThat(foundCart).isNotNull();
+		assertThat(foundCart.userId()).isEqualTo(1L);
+		assertThat(foundCart.items().size()).isEqualTo(1L);
+		assertThat(foundCart.items().getFirst().quantity()).isEqualTo(5L);
 	}
 
 	@Test
@@ -53,8 +59,12 @@ class CartServiceTest {
 	void add_item_to_cart() {
 		// Given
 		User user = Fixtures.user(1L);
+		Product product = Fixtures.product("후드티");
 
-		Cart cart = new Cart(1L, user.id());
+		Cart cart = new Cart(1L, user.id(), List.of(
+			new CartItem(1L, product.id(), 5L)
+		));
+
 		List<NewCartItem> newCartItems = List.of(
 			new NewCartItem(1L, 1L)
 		);
@@ -71,16 +81,17 @@ class CartServiceTest {
 	void get_selected_cart_items() {
 		// Given
 		Long userId = 1L;
-		Cart cart = new Cart(1L, userId);
 
 		List<Long> selectedCartItemIds = List.of(10L, 12L);
 
 		List<CartItem> cartAllItem = List.of(
-			new CartItem(10L, cart.id(), 1L, 1L),
-			new CartItem(11L, cart.id(), 2L, 1L),
-			new CartItem(12L, cart.id(), 3L, 1L),
-			new CartItem(13L, cart.id(), 4L, 1L)
+			new CartItem(10L, 1L, 1L),
+			new CartItem(11L, 2L, 2L),
+			new CartItem(12L, 3L, 3L),
+			new CartItem(13L, 4L, 4L)
 		);
+
+		Cart cart = new Cart(1L, userId, cartAllItem);
 
 		given(cartItemFinder.findAllByCartId(any())).willReturn(cartAllItem);
 
@@ -98,14 +109,14 @@ class CartServiceTest {
 	void get_all_cart_items() {
 		// Given
 		Long userId = 1L;
-		Cart cart = new Cart(1L, userId);
 		Product product1 = Fixtures.product("후드티");
 		Product product2 = Fixtures.product("맨투맨");
-
 		List<CartItem> cartItems = List.of(
-			new CartItem(1L, userId, product1.id(), product1.stockQuantity()),
-			new CartItem(1L, userId, product2.id(), product2.stockQuantity())
+			new CartItem(1L, product1.id(), product1.stockQuantity()),
+			new CartItem(1L, product2.id(), product2.stockQuantity())
 		);
+
+		Cart cart = new Cart(1L, userId, cartItems);
 
 		given(cartItemFinder.findAllByCartId(any())).willReturn(cartItems);
 
@@ -123,8 +134,8 @@ class CartServiceTest {
 	void delete_cart_items() {
 		// Given
 		List<CartItem> cartItems = List.of(
-			new CartItem(1L, 1L, 1L, 1L),
-			new CartItem(2L, 1L, 3L, 1L)
+			new CartItem(1L, 1L, 1L),
+			new CartItem(2L, 3L, 1L)
 		);
 
 		// When
@@ -132,5 +143,18 @@ class CartServiceTest {
 
 		// Then
 		verify(cartItemRemover, atLeastOnce()).removeItems(any());
+	}
+
+	@Test
+	@DisplayName("사용자의 장바구니를 초기화 한다.")
+	void reset_cart_items() {
+		// Given
+		User user = Fixtures.user(1L);
+
+		// When
+		cartService.resetCart(user);
+
+		// Then
+		verify(cartItemRemover, atLeastOnce()).resetCart(any());
 	}
 }

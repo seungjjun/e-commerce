@@ -1,9 +1,10 @@
 package com.hanghae.ecommerce;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.hanghae.ecommerce.domain.order.Order;
-import com.hanghae.ecommerce.domain.orderitem.OrderItem;
+import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.domain.payment.Payment;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.product.Stock;
@@ -48,32 +49,41 @@ public class Fixtures {
 
 	public static Order order(OrderStatus orderStatus) {
 		if (orderStatus.equals(OrderStatus.READY)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.READY.toString(),
-				LocalDateTime.now());
-		}
-
-		if (orderStatus.equals(OrderStatus.COMPLETE)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.CANCELED.toString(),
-				LocalDateTime.now());
-		}
-
-		if (orderStatus.equals(OrderStatus.CANCELED)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.CANCELED.toString(),
+			return new Order(
+				1L,
+				1L,
+				89_000L,
+				List.of(
+					new OrderItem(1L, 1L, 1L, "후드티", 39_000L, 39_000L, 1L, "CREATED"),
+					new OrderItem(2L, 1L, 2L, "맨투맨", 50_000L, 50_000L, 1L, "SUCCESS")
+				),
+				"홍길동",
+				"서울특별시 송파구",
+				"01012345678",
+				OrderStatus.READY.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.PAID)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAID.toString(),
+			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAID.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.PAY_FAILED)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAY_FAILED.toString(),
+			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
+				OrderStatus.PAY_FAILED.toString(),
 				LocalDateTime.now());
 		}
 
-		if (orderStatus.equals(OrderStatus.WAITING_FOR_PAY)) {
-			return new Order(1L, 1L, 89_000L, "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.WAITING_FOR_PAY.toString(),
+		if (orderStatus.equals(OrderStatus.FAIL)) {
+			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
+				OrderStatus.CANCELED.toString(),
+				LocalDateTime.now());
+		}
+
+		if (orderStatus.equals(OrderStatus.CANCELED)) {
+			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
+				OrderStatus.CANCELED.toString(),
 				LocalDateTime.now());
 		}
 
@@ -82,11 +92,11 @@ public class Fixtures {
 
 	public static OrderItem orderItem(Long orderId, Long productId) {
 		if (orderId.equals(1L) && productId.equals(1L)) {
-			return new OrderItem(1L, orderId, productId, "후드티", 50_000L, 150_000L, 3L);
+			return new OrderItem(1L, orderId, productId, "후드티", 50_000L, 150_000L, 3L, "CREATED");
 		}
 
 		if (orderId.equals(2L) && productId.equals(2L)) {
-			return new OrderItem(2L, orderId, productId, "맨투맨", 39_000L, 78_000L, 2L);
+			return new OrderItem(2L, orderId, productId, "맨투맨", 39_000L, 78_000L, 2L, "CREATED");
 		}
 
 		throw new EntityNotFoundException("Order Item Not Found - order id: " + orderId + ", product id: " + productId);

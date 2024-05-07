@@ -1,10 +1,12 @@
-package com.hanghae.ecommerce.storage.orderitem;
+package com.hanghae.ecommerce.storage.order;
 
-import com.hanghae.ecommerce.domain.orderitem.OrderItem;
+import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.storage.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,19 +35,24 @@ public class OrderItemEntity extends BaseEntity {
 	@Column(name = "quantity")
 	private Long quantity;
 
+	@Enumerated(EnumType.STRING)
+	private OrderItemStatus status;
+
 	public OrderItemEntity(
 		Long orderId,
 		Long productId,
 		String productName,
 		Long unitPrice,
 		Long totalPrice,
-		Long quantity) {
+		Long quantity,
+		OrderItemStatus status) {
 		this.orderId = orderId;
 		this.productId = productId;
 		this.productName = productName;
 		this.unitPrice = unitPrice;
 		this.totalPrice = totalPrice;
 		this.quantity = quantity;
+		this.status = status;
 	}
 
 	public OrderItem toOrderItem() {
@@ -56,7 +63,12 @@ public class OrderItemEntity extends BaseEntity {
 			productName,
 			unitPrice,
 			totalPrice,
-			quantity
+			quantity,
+			status.toString()
 		);
+	}
+
+	public void updateStatus(OrderItemStatus status) {
+		this.status = status;
 	}
 }

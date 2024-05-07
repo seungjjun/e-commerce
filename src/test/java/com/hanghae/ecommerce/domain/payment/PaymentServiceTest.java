@@ -1,12 +1,9 @@
 package com.hanghae.ecommerce.domain.payment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,10 +12,8 @@ import org.junit.jupiter.api.Test;
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
-import com.hanghae.ecommerce.common.LockHandler;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderUpdater;
-import com.hanghae.ecommerce.domain.order.OrderValidator;
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserPointManager;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
@@ -28,10 +23,8 @@ class PaymentServiceTest {
 
 	private PaymentService paymentService;
 	private OrderUpdater orderUpdater;
-	private OrderValidator orderValidator;
 	private PaymentAppender paymentAppender;
 	private UserPointManager userPointManager;
-	private LockHandler lockHandler;
 
 	private Long userId;
 	private Long orderId;
@@ -42,13 +35,11 @@ class PaymentServiceTest {
 	@BeforeEach
 	void setUp() {
 		orderUpdater = mock(OrderUpdater.class);
-		orderValidator = mock(OrderValidator.class);
 		paymentAppender = mock(PaymentAppender.class);
 		userPointManager = mock(UserPointManager.class);
-		lockHandler = mock(LockHandler.class);
 
 		paymentService =
-			new PaymentService(orderUpdater, orderValidator, paymentAppender, userPointManager, lockHandler);
+			new PaymentService(orderUpdater, paymentAppender, userPointManager);
 
 		userId = 1L;
 		orderId = 1L;
@@ -61,7 +52,6 @@ class PaymentServiceTest {
 			user.name(),
 			user.address(),
 			user.phoneNumber()),
-			List.of(new OrderRequest.ProductOrderRequest(1L, 1L)),
 			payAmount,
 			paymentMethod
 		);
@@ -72,9 +62,8 @@ class PaymentServiceTest {
 	void succeed_pay_with_card() {
 		// Given
 		Payment payment = Fixtures.payment(orderId);
-		Order order = Fixtures.order(OrderStatus.WAITING_FOR_PAY);
+		Order order = Fixtures.order(OrderStatus.READY);
 
-		given(orderValidator.isOrderStatusWaitingForPay(any())).willReturn(true);
 		given(paymentAppender.create(any(), any(), any())).willReturn(payment);
 
 		// When
@@ -84,20 +73,8 @@ class PaymentServiceTest {
 		assertThat(paid).isNotNull();
 		assertThat(paid.payAmount()).isEqualTo(89_000L);
 		assertThat(paid.paymentMethod()).isEqualTo("CARD");
+
 		verify(userPointManager, atLeastOnce()).usePoint(any(), any());
-	}
-
-	@Test
-	@DisplayName("주문 상태가 결제 대기 상태가 아닌 경우 결제는 실패한다.")
-	void when_order_status_is_not_waiting_for_pay_then_failed_pay() {
-		// Given
-		Order order = Fixtures.order(OrderStatus.PAY_FAILED);
-
-		given(orderValidator.isOrderStatusWaitingForPay(any())).willReturn(false);
-
-		// When && Then
-		assertThrows(IllegalArgumentException.class, () -> {
-			paymentService.pay(user, order, request);
-		});
+		verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
 	}
 }

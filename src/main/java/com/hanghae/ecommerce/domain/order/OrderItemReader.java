@@ -1,4 +1,4 @@
-package com.hanghae.ecommerce.domain.orderitem;
+package com.hanghae.ecommerce.domain.order;
 
 import java.util.List;
 
