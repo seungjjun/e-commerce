@@ -41,7 +41,7 @@ public class CartItemEntity extends BaseEntity {
 	}
 
 	public CartItem toCartItem() {
-		return new CartItem(getId(), cartId, productId, quantity);
+		return new CartItem(getId(), productId, quantity);
 	}
 
 	public boolean isDeleted() {

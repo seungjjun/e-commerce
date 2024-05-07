@@ -29,15 +29,15 @@ public class UserIntegrationTest {
 	private UserService userService;
 
 	@Test
-	@DisplayName("동시에 2건의 사용자 포인트 충전")
+	@DisplayName("동시에 100건의 사용자 포인트 충전")
 	void concurrency_charge_point() throws InterruptedException {
 		// Given
-		int numThreads = 2;
+		int numThreads = 100;
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		CountDownLatch latch = new CountDownLatch(numThreads);
 
 		Long userId = 1L;
-		Long amount = 5000L;
+		Long amount = 50L;
 
 		// When
 
@@ -57,6 +57,6 @@ public class UserIntegrationTest {
 		// Then
 		User user = userService.getUser(userId);
 
-		assertThat(user.point()).isEqualTo(100_000L + 5000L + 5000L);
+		assertThat(user.point()).isEqualTo(100_000L + (50 * 100));
 	}
 }

@@ -1,4 +1,9 @@
 package com.hanghae.ecommerce.domain.cart;
 
-public record Cart(Long id, Long userId) {
+import java.util.List;
+
+public record Cart(
+	Long id,
+	Long userId,
+	List<CartItem> items) {
 }

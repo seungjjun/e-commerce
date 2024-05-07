@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.storage.product.ProductEntity;
 
 class ProductReaderTest {
@@ -68,17 +67,12 @@ class ProductReaderTest {
 	@DisplayName("상품 id list 기반으로 상품을 조회한다.")
 	void readAllProductByIds() {
 		// Given
-		List<OrderRequest.ProductOrderRequest> productOrderRequests = List.of(
-			new OrderRequest.ProductOrderRequest(1L, 1L),
-			new OrderRequest.ProductOrderRequest(2L, 5L)
-		);
-
 		List<Product> products = List.of(
 			Fixtures.product("후드티"),
 			Fixtures.product("맨투맨")
 		);
 
-		List<Long> productIds = productOrderRequests.stream().map(OrderRequest.ProductOrderRequest::id).toList();
+		List<Long> productIds = products.stream().map(Product::id).toList();
 
 		given(productRepository.findByIdIn(any())).willReturn(products);
 

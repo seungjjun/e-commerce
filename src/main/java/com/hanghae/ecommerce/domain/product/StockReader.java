@@ -1,8 +1,7 @@
 package com.hanghae.ecommerce.domain.product;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class StockReader {
@@ -12,9 +11,8 @@ public class StockReader {
 		this.stockRepository = stockRepository;
 	}
 
-	public List<Stock> readByProductIds(List<Product> products) {
-		return stockRepository.findByProductIdIn(products.stream()
-			.map(Product::id)
-			.toList());
+	@Transactional
+	public Stock readByProductId(Long productId) {
+		return stockRepository.findByProductId(productId);
 	}
 }

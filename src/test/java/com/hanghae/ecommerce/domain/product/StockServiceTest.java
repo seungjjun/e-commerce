@@ -1,88 +1,71 @@
 package com.hanghae.ecommerce.domain.product;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-
-import java.util.List;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
-import com.hanghae.ecommerce.api.dto.request.Receiver;
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
+import com.hanghae.ecommerce.domain.order.OrderReader;
+import com.hanghae.ecommerce.storage.order.OrderStatus;
 
 class StockServiceTest {
 	private StockService stockService;
 	private StockReader stockReader;
 	private StockValidator stockValidator;
 	private StockUpdator stockUpdator;
+	private OrderReader orderReader;
 
 	@BeforeEach
 	void setUp() {
 		stockReader = mock(StockReader.class);
 		stockValidator = mock(StockValidator.class);
 		stockUpdator = mock(StockUpdator.class);
+		orderReader = mock(OrderReader.class);
 
-		stockService = new StockService(stockReader, stockValidator, stockUpdator);
-	}
-
-	@Test
-	@DisplayName("상품 재고를 조회한다.")
-	void getProductStockQuantity() {
-		// Given
-		List<Product> products = List.of(Fixtures.product("후드티"));
-
-		given(stockReader.readByProductIds(anyList())).willReturn(List.of(
-			Fixtures.stock(products.get(0).id())
-		));
-
-		// When
-		List<Stock> stocks = stockService.getStocksByProductIds(products);
-
-		// Then
-		assertThat(stocks.size()).isEqualTo(1);
-		assertThat(stocks.getFirst().productId()).isEqualTo(1L);
-		assertThat(stocks.getFirst().stockQuantity()).isEqualTo(5L);
+		stockService = new StockService(stockReader, stockValidator, stockUpdator, orderReader);
 	}
 
 	@Test
 	@DisplayName("상품 재고를 감소시킨다.")
-	void decreaseProductStockQuantity() {
+	void decrease_product_stock_quantity() {
 		// Given
-		List<Stock> stocks = List.of(
-			Fixtures.stock(1L),
-			Fixtures.stock(2L)
-		);
+		Product product = Fixtures.product("후드티");
+		Stock stock = Fixtures.stock(product.id());
 
-		OrderRequest request = new OrderRequest(
-			new Receiver(
-				"홍길동",
-				"서울 송파",
-				"01012345678"
-			),
-			List.of(
-				new OrderRequest.ProductOrderRequest(1L, 1L),
-				new OrderRequest.ProductOrderRequest(2L, 10L)
-			),
-			50_000L,
-			"CARD"
-		);
+		given(stockReader.readByProductId(any())).willReturn(stock);
 
-		given(stockUpdator.updateStockForOrder(anyList(), anyList())).willReturn(List.of(
-			Fixtures.stock(1L).decreaseStock(request.products().get(0).quantity()),
-			Fixtures.stock(2L).decreaseStock(request.products().get(1).quantity())
-		));
+		OrderItem item =
+			new OrderItem(1L, 1L, product.id(), product.name(), product.price(), product.orderTotalPrice(3L), 3L,
+				"CREATED");
 
 		// When
-		List<Stock> decreaseProductStock = stockService.decreaseProductStock(List.of(), request);
+		stockService.decreaseProductStock(item);
 
 		// Then
-		assertThat(decreaseProductStock.size()).isEqualTo(2);
-		assertThat(decreaseProductStock.getFirst().stockQuantity()).isEqualTo(5 - 1);
-		assertThat(decreaseProductStock.getLast().stockQuantity()).isEqualTo(10L - 10L);
+		verify(stockValidator, atLeastOnce()).checkProductStockQuantityForOrder(any(), any());
+		verify(stockUpdator, atLeastOnce()).decreaseStock(any(), any());
+	}
+
+	@Test
+	@DisplayName("주문이 실패되었을 때, 상품 재고가 감소된 상품의 재고를 다시 증가시킨다.")
+	void when_order_failed_then_compensate_stock_quantity() {
+		// Given
+		Order order = Fixtures.order(OrderStatus.READY);
+		Stock stock = Fixtures.stock(order.items().get(1).productId());
+
+		given(orderReader.read(any())).willReturn(order);
+		given(stockReader.readByProductId(any())).willReturn(stock);
+
+		// When
+		stockService.compensateOrderStock(order);
+
+		// Then
+		verify(stockUpdator, atLeastOnce()).increaseStock(any(), any());
 	}
 }

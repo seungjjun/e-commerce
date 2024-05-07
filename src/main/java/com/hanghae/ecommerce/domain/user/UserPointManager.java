@@ -22,7 +22,7 @@ public class UserPointManager {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public User usePoint(User user, Long payAmount) {
-		User foundUser = userReader.readById(user.id());
+		User foundUser = userReader.readByIdWithLock(user.id());
 		foundUser.isEnoughPointForPay(payAmount);
 		return userRepository.updateUserPoint(foundUser.minusPoint(payAmount));
 	}

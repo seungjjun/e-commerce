@@ -7,8 +7,7 @@ public enum OrderStatus {
 	READY("READY"),
 	PAID("PAID"),
 	PAY_FAILED("PAY FAILED"),
-	WAITING_FOR_PAY("WAITING FOR PAY"),
-	COMPLETE("COMPLETE"),
+	FAIL("FAIL"),
 	CANCELED("CANCELED");
 
 	private final String value;

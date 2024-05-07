@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
+import com.hanghae.ecommerce.domain.order.Order;
 
 @Service
 public class ProductService {
@@ -38,11 +38,11 @@ public class ProductService {
 		return productReader.readAllByIds(productIds);
 	}
 
-	public void updateStockQuantity(List<Product> products, List<OrderRequest.ProductOrderRequest> orderRequests) {
-		productUpdator.updateStock(products, orderRequests);
-	}
-
 	public void checkProductStockForAddToCart(List<NewCartItem> cartItems) {
 		productValidator.checkPossibleAddToCart(cartItems);
+	}
+
+	public void updateStockQuantity(List<Product> products, Order order) {
+		productUpdator.updateStock(products, order);
 	}
 }

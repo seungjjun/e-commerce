@@ -1,8 +1,10 @@
 package com.hanghae.ecommerce.storage.order;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.storage.BaseEntity;
 
 import jakarta.persistence.Entity;
@@ -34,12 +36,12 @@ public class OrderEntity extends BaseEntity {
 	private LocalDateTime orderedAt;
 
 	public OrderEntity(Long userId,
-						Long payAmount,
-						String receiverName,
-						String address,
-						String phoneNumber,
-						OrderStatus orderStatus,
-						LocalDateTime orderedAt) {
+					   Long payAmount,
+					   String receiverName,
+					   String address,
+					   String phoneNumber,
+					   OrderStatus orderStatus,
+					   LocalDateTime orderedAt) {
 		this.userId = userId;
 		this.payAmount = payAmount;
 		this.receiverName = receiverName;
@@ -49,8 +51,8 @@ public class OrderEntity extends BaseEntity {
 		this.orderedAt = orderedAt;
 	}
 
-	public Order toOrder() {
-		return new Order(getId(), userId, payAmount, receiverName, address, phoneNumber, orderStatus.toString(),
+	public Order toOrder(List<OrderItem> items) {
+		return new Order(getId(), userId, payAmount, items, receiverName, address, phoneNumber, orderStatus.toString(),
 			orderedAt);
 	}
 
