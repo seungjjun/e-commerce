@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.hanghae.ecommerce.domain.cart.Cart;
 import com.hanghae.ecommerce.domain.cart.CartRepository;
+import com.hanghae.ecommerce.domain.user.User;
 
 import lombok.RequiredArgsConstructor;
 

@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.domain.order.OrderService;
 import com.hanghae.ecommerce.domain.order.event.OrderCreatedEvent;
 import com.hanghae.ecommerce.domain.order.event.OrderEventPublisher;

@@ -25,8 +25,6 @@ public class UserPointManager {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public User usePoint(Long userId, Long payAmount) {
-		log.info("use Thread: {}", Thread.currentThread());
-		log.info("use Transaction: {}", TransactionSynchronizationManager.getCurrentTransactionName());
 		User foundUser = userReader.readByIdWithLock(userId);
 		foundUser.isEnoughPointForPay(payAmount);
 		return userRepository.updateUserPoint(foundUser.minusPoint(payAmount));
