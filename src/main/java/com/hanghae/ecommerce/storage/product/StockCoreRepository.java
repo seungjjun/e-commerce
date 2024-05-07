@@ -1,7 +1,5 @@
 package com.hanghae.ecommerce.storage.product;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 
 import com.hanghae.ecommerce.domain.product.Stock;
@@ -18,16 +16,16 @@ public class StockCoreRepository implements StockRepository {
 	}
 
 	@Override
-	public List<Stock> findByProductIdIn(List<Long> productIds) {
-		return stockJpaRepository.findByProductIdIn(productIds)
-			.stream().map(StockEntity::toStock)
-			.toList();
-	}
-
-	@Override
 	public void updateStock(Stock stock) {
 		StockEntity stockEntity = stockJpaRepository.findById(stock.id())
 			.orElseThrow(() -> new EntityNotFoundException("재고 정보를 찾지 못했습니다. - id: " + stock.id()));
 		stockEntity.updateStock(stock.stockQuantity());
+	}
+
+	@Override
+	public Stock findByProductId(Long productId) {
+		return stockJpaRepository.findByProductId(productId)
+			.orElseThrow(() -> new EntityNotFoundException("재고 정보를 찾지 못했습니다. - id: " + productId))
+			.toStock();
 	}
 }

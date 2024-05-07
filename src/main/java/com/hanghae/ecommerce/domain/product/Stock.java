@@ -11,7 +11,11 @@ public record Stock(
 		}
 	}
 
-	public Stock decreaseStock(Long quantity) {
+	public Stock decreaseQuantity(Long quantity) {
 		return new Stock(id, productId, stockQuantity - quantity);
+	}
+
+	public Stock increaseQuantity(Long quantity) {
+		return new Stock(id, productId, stockQuantity + quantity);
 	}
 }

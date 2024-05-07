@@ -1,7 +1,6 @@
 package com.hanghae.ecommerce.domain.user;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae.ecommerce.common.LockHandler;
 
@@ -19,7 +18,6 @@ public class UserPointService {
 		this.lockHandler = lockHandler;
 	}
 
-	@Transactional
 	public Long chargePoint(Long userId, Long amount) {
 		String key = USER_POINT_LOCK_PREFIX + userId;
 		lockHandler.lock(key, 2, 1);

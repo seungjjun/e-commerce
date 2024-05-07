@@ -1,4 +1,4 @@
-package com.hanghae.ecommerce.domain.orderitem;
+package com.hanghae.ecommerce.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

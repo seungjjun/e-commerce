@@ -1,33 +1,39 @@
 package com.hanghae.ecommerce.domain.product;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
+import com.hanghae.ecommerce.domain.order.OrderReader;
+import com.hanghae.ecommerce.storage.order.OrderItemStatus;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class StockService {
 	private final StockReader stockReader;
 	private final StockValidator stockValidator;
 	private final StockUpdator stockUpdator;
+	private final OrderReader orderReader;
 
-	public StockService(StockReader stockReader, StockValidator stockValidator, StockUpdator stockUpdator) {
-		this.stockReader = stockReader;
-		this.stockValidator = stockValidator;
-		this.stockUpdator = stockUpdator;
-	}
-
-	public List<Stock> getStocksByProductIds(List<Product> products) {
-		return stockReader.readByProductIds(products);
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void decreaseProductStock(OrderItem item) {
+		Stock stock = stockReader.readByProductId(item.productId());
+		stockValidator.checkProductStockQuantityForOrder(stock, item);
+		stockUpdator.decreaseStock(stock, item);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public List<Stock> decreaseProductStock(List<Product> products, OrderRequest request) {
-		List<Stock> stocks = stockReader.readByProductIds(products);
-		stockValidator.checkProductStockQuantityForOrder(stocks, request.products());
-		return stockUpdator.updateStockForOrder(stocks, request.products());
+	public void compensateOrderStock(Order order) {
+		Order foundOrder = orderReader.read(order);
+		for (OrderItem item : foundOrder.items()) {
+			if (item.status().equals(OrderItemStatus.SUCCESS.toString())) {
+				Stock stock = stockReader.readByProductId(item.productId());
+				stockUpdator.increaseStock(stock, item);
+			}
+		}
 	}
 }

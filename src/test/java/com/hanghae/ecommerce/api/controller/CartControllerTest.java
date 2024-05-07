@@ -88,7 +88,7 @@ class CartControllerTest {
 		Long userId = 1L;
 
 		CartItemResult cartItemResult = CartItemResult.of(
-			List.of(new CartItem(1L, 1L, 2L, 2L)),
+			List.of(new CartItem(1L, 2L, 2L)),
 			List.of(Fixtures.product("맨투맨"))
 		);
 

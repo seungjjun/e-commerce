@@ -29,4 +29,11 @@ public class UserCoreRepository implements UserRepository {
 		userEntity.updatePoint(user);
 		return userJpaRepository.save(userEntity).toUser();
 	}
+
+	@Override
+	public User findByIdWithLock(Long userId) {
+		return userJpaRepository.findByIdWithLock(userId)
+			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾지 못했습니다. - id: " + userId))
+			.toUser();
+	}
 }

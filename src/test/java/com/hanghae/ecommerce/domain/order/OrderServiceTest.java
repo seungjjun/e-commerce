@@ -14,15 +14,15 @@ import org.junit.jupiter.api.Test;
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
-import com.hanghae.ecommerce.domain.orderitem.OrderItemAppender;
+import com.hanghae.ecommerce.domain.cart.Cart;
 import com.hanghae.ecommerce.domain.product.Product;
 import com.hanghae.ecommerce.domain.user.User;
+import com.hanghae.ecommerce.storage.order.OrderItemStatus;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 
 class OrderServiceTest {
 	private OrderService orderService;
-	private OrderItemAppender orderItemAppender;
-	private OrderProcessor orderProcessor;
+	private OrderAppender orderAppender;
 	private OrderUpdater orderUpdater;
 
 	private User user;
@@ -30,11 +30,10 @@ class OrderServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		orderItemAppender = mock(OrderItemAppender.class);
-		orderProcessor = mock(OrderProcessor.class);
+		orderAppender = mock(OrderAppender.class);
 		orderUpdater = mock(OrderUpdater.class);
 
-		orderService = new OrderService(orderItemAppender, orderProcessor, orderUpdater);
+		orderService = new OrderService(orderAppender, orderUpdater);
 
 		user = Fixtures.user(1L);
 		request = new OrderRequest(
@@ -43,32 +42,57 @@ class OrderServiceTest {
 				user.address(),
 				user.phoneNumber()
 			),
-			List.of(
-				new OrderRequest.ProductOrderRequest(1L, 1L)
-			),
 			50_000L,
 			"CARD"
 		);
 	}
 
 	@Test
-	@DisplayName("주문 생성 성공 - 주문 상태 waiting for pay")
-	void when_succeed_order_then_order_status_is_complete() {
+	@DisplayName("주문 생성 성공")
+	void create_order() {
 		// Given
-		List<Product> products = List.of();
 		Order readyOrder = Fixtures.order(OrderStatus.READY);
-		Order waitingForPayOrder = Fixtures.order(OrderStatus.WAITING_FOR_PAY);
+		Cart cart = new Cart(1L, user.id(), List.of());
 
-		given(orderProcessor.order(any(), any())).willReturn(readyOrder);
-		given(orderUpdater.changeStatus(any(), any())).willReturn(waitingForPayOrder);
+		given(orderAppender.append(any(), any(), any())).willReturn(readyOrder);
 
 		// When
-		Order order = orderService.order(user, products, request);
+		Order order = orderService.order(user, cart, request);
 
 		// Then
 		assertThat(order).isNotNull();
 		assertThat(order.payAmount()).isEqualTo(89_000L);
-		assertThat(order.orderStatus()).isEqualTo("WAITING FOR PAY");
+		assertThat(order.orderStatus()).isEqualTo("READY");
+	}
+
+	@Test
+	@DisplayName("주문 아이템 상태 변경")
+	void update_order_item() {
+		// Given
+		Product product = Fixtures.product("후드티");
+		OrderItem item = new OrderItem(
+			1L, 1L,
+			product.id(), product.name(),
+			product.price(), product.orderTotalPrice(5L),
+			5L, OrderItemStatus.CREATED.toString());
+
+		// When
+		orderService.updateItemStatus(item, OrderItemStatus.SUCCESS);
+
+		// Then
+		verify(orderUpdater, atLeastOnce()).changeItemStatus(any(), any());
+	}
+
+	@Test
+	@DisplayName("주문 실패 시 주문 상태 변경")
+	void when_order_failed_then_order_status_is_failed() {
+		// Given
+		Order order = Fixtures.order(OrderStatus.READY);
+
+		// When
+		orderService.orderFailed(order);
+
+		// Then
 		verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());
 	}
 }

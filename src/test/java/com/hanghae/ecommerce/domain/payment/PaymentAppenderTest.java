@@ -30,7 +30,7 @@ class PaymentAppenderTest {
 	@DisplayName("결제 생성 성공")
 	void succeed_create_payment() {
 		// Given
-		Order order = Fixtures.order(OrderStatus.COMPLETE);
+		Order order = Fixtures.order(OrderStatus.READY);
 		Payment payment = Fixtures.payment(order.id());
 
 		given(paymentRepository.create(any(), any(), any())).willReturn(payment);

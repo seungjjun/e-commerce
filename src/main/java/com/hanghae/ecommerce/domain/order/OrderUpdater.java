@@ -2,18 +2,22 @@ package com.hanghae.ecommerce.domain.order;
 
 import org.springframework.stereotype.Component;
 
+import com.hanghae.ecommerce.storage.order.OrderItemStatus;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class OrderUpdater {
 	private final OrderRepository orderRepository;
+	private final OrderItemRepository orderItemRepository;
 
-	public OrderUpdater(OrderRepository orderRepository) {
-		this.orderRepository = orderRepository;
+	public void changeStatus(Order order, OrderStatus orderStatus) {
+		orderRepository.updateStatus(order, orderStatus);
 	}
 
-	public Order changeStatus(Order order, OrderStatus orderStatus) {
-		Order changedStatusOrder = order.changeStatus(orderStatus);
-		return orderRepository.updateStatus(changedStatusOrder, orderStatus);
+	public void changeItemStatus(OrderItem item, OrderItemStatus orderItemStatus) {
+		orderItemRepository.updateStatus(item, orderItemStatus);
 	}
 }

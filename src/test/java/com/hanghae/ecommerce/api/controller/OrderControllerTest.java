@@ -94,40 +94,6 @@ class OrderControllerTest {
 							"address":"",
 							"phoneNumber":""
 						},
-						"products" : [
-							{
-								"id":1,
-								"quantity":1
-							}
-						],
-						"paymentAmount":58000,
-						"paymentMethod" :"CARD"
-						}
-					"""))
-			.andExpect(status().isBadRequest());
-
-		verify(orderUseCase, never()).order(anyLong(), any());
-	}
-
-	@Test
-	@DisplayName("주문 상품 정보를 입력하지 않은 경우 주문 요청에 실패한다.")
-	void when_not_entered_order_product_then_failed_order() throws Exception {
-		// Given
-		Long userId = 1L;
-
-		// When && Then
-		mockMvc.perform(post("/orders/" + userId)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-							"receiver":{
-							"name":"홍길동",
-							"address":"서울특별시 송파구",
-							"phoneNumber":"01012345678"
-						},
-						"products" : [
-							{}
-						],
 						"paymentAmount":58000,
 						"paymentMethod" :"CARD"
 						}
@@ -153,12 +119,6 @@ class OrderControllerTest {
 						"address":"서울특별시 송파구",
 						"phoneNumber":"01012345678"
 					},
-					"products" : [
-						{
-							"id":1,
-							"quantity":1
-						}
-					],
 					"paymentMethod" :"CARD"
 					}
 					"""))
@@ -183,12 +143,6 @@ class OrderControllerTest {
 						"address":"서울특별시 송파구",
 						"phoneNumber":"01012345678"
 					},
-					"products" : [
-						{
-							"id":1,
-							"quantity":1
-						}
-					],
 					"paymentAmount":58000
 					}
 					"""))

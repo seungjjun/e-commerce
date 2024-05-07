@@ -1,13 +1,8 @@
 package com.hanghae.ecommerce.domain.product;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
-import com.hanghae.ecommerce.api.dto.request.OrderRequest;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.hanghae.ecommerce.domain.order.OrderItem;
 
 @Component
 public class StockUpdator {
@@ -17,18 +12,13 @@ public class StockUpdator {
 		this.stockRepository = stockRepository;
 	}
 
-	public List<Stock> updateStockForOrder(List<Stock> stocks, List<OrderRequest.ProductOrderRequest> products) {
-		List<Stock> stockList = new ArrayList<>();
-		for (OrderRequest.ProductOrderRequest orderRequest : products) {
-			Stock stock = stocks.stream()
-				.filter(s -> s.productId().equals(orderRequest.id()))
-				.findFirst()
-				.orElseThrow(() -> new EntityNotFoundException(orderRequest.id() + " 상품의 정보를 찾지 못했습니다."));
+	public void decreaseStock(Stock stock, OrderItem item) {
+		Stock decreasedStock = stock.decreaseQuantity(item.quantity());
+		stockRepository.updateStock(decreasedStock);
+	}
 
-			Stock decreasedStock = stock.decreaseStock(orderRequest.quantity());
-			stockRepository.updateStock(decreasedStock);
-			stockList.add(decreasedStock);
-		}
-		return stocks;
+	public void increaseStock(Stock stock, OrderItem item) {
+		Stock increasedStock = stock.increaseQuantity(item.quantity());
+		stockRepository.updateStock(increasedStock);
 	}
 }

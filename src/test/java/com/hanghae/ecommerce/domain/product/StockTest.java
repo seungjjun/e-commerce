@@ -45,10 +45,23 @@ class StockTest {
 		Long orderStockQuantity = 2L;
 
 		// When
-		Stock decreasedProductStock = stock.decreaseStock(orderStockQuantity);
+		Stock decreasedProductStock = stock.decreaseQuantity(orderStockQuantity);
 
 		// Then
 		assertThat(decreasedProductStock.stockQuantity()).isEqualTo(3L - 2L);
 	}
 
+	@Test
+	@DisplayName("상품 재고를 증가시킨다")
+	void increase_stock() {
+		// Given
+		Stock stock = new Stock(1L, 1L, 1L);
+		Long stockQuantity = 2L;
+
+		// When
+		Stock increasedQuantity = stock.increaseQuantity(stockQuantity);
+
+		// Then
+		assertThat(increasedQuantity.stockQuantity()).isEqualTo(1L + 2L);
+	}
 }

@@ -1,11 +1,9 @@
 package com.hanghae.ecommerce.domain.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,22 +27,18 @@ class StockReaderTest {
 	@DisplayName("상품 재고를 가져온다.")
 	void getProductStock() {
 		// Given
-		List<Product> products = List.of(
-			Fixtures.product("후드티"),
-			Fixtures.product("맨투맨")
-		);
+		Product product = Fixtures.product("후드티");
+		Long stockQuantity = 5L;
 
-		given(stockRepository.findByProductIdIn(anyList())).willReturn(List.of(
-			Fixtures.stock(products.get(0).id()),
-			Fixtures.stock(products.get(1).id())
-		));
+		Stock stock = new Stock(1L, product.id(), stockQuantity);
+
+		given(stockRepository.findByProductId(any())).willReturn(stock);
 
 		// When
-		List<Stock> stocks = stockReader.readByProductIds(products);
+		Stock foundStock = stockReader.readByProductId(product.id());
 
 		// Then
-		assertThat(stocks.size()).isEqualTo(2L);
-		assertThat(stocks.getFirst().productId()).isEqualTo(1L);
-		assertThat(stocks.getLast().productId()).isEqualTo(2L);
+		assertThat(foundStock.productId()).isEqualTo(1L);
+		assertThat(foundStock.stockQuantity()).isEqualTo(5L);
 	}
 }

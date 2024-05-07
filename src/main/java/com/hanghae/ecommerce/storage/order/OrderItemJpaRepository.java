@@ -1,4 +1,4 @@
-package com.hanghae.ecommerce.storage.orderitem;
+package com.hanghae.ecommerce.storage.order;
 
 import java.util.List;
 
