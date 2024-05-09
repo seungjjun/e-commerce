@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.product;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Component;
 
 import com.hanghae.ecommerce.domain.order.Order;
@@ -25,7 +26,12 @@ public class ProductUpdator {
 				.orElseThrow(() -> new EntityNotFoundException(item.productId() + " 상품의 정보를 찾지 못했습니다."));
 
 			Product decreasedProduct = product.decreaseStock(item.quantity());
-			productRepository.updateStock(decreasedProduct);
+			updateProductStock(decreasedProduct);
 		}
+	}
+
+	@CachePut(value = "products", key = "#product.id", unless = "#result == null", cacheManager = "cacheManager")
+	public Product updateProductStock(Product product) {
+		return productRepository.updateStock(product);
 	}
 }

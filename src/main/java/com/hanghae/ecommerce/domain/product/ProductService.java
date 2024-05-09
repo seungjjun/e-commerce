@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.product;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
@@ -26,16 +27,20 @@ public class ProductService {
 		return productReader.readAll();
 	}
 
+	@Cacheable(value = "products", key = "#productId", cacheManager = "cacheManager")
 	public Product getProductDetail(Long productId) {
 		return productReader.readById(productId);
 	}
 
+	@Cacheable(value = "products", key = "'popular'", cacheManager = "cacheManager")
 	public List<Product> getPopularProducts() {
 		return productReader.readPopularProducts();
 	}
 
 	public List<Product> getProductsByIds(List<Long> productIds) {
-		return productReader.readAllByIds(productIds);
+		return productIds.stream()
+			.map(this::getProductDetail)
+			.toList();
 	}
 
 	public void checkProductStockForAddToCart(List<NewCartItem> cartItems) {

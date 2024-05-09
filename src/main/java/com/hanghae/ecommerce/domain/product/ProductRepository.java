@@ -16,7 +16,7 @@ public interface ProductRepository {
 
 	List<Product> findByIdIn(List<Long> productIds);
 
-	void updateStock(Product product);
+	Product updateStock(Product product);
 
 	List<Product> findTopSellingProducts(
 		OrderStatus orderStatus,
