@@ -98,7 +98,9 @@ class ProductServiceTest {
 			Fixtures.product("모자")
 		);
 
-		given(productReader.readAllByIds(anyList())).willReturn(products);
+		given(productReader.readById(products.get(0).id())).willReturn(products.get(0));
+		given(productReader.readById(products.get(1).id())).willReturn(products.get(1));
+		given(productReader.readById(products.get(2).id())).willReturn(products.get(2));
 
 		// When
 		List<Product> productList = productService.getProductsByIds(products.stream().map(Product::id).toList());

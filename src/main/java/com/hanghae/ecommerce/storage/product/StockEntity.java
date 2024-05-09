@@ -5,13 +5,14 @@ import com.hanghae.ecommerce.storage.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_stocks")
+@Table(name = "product_stocks", indexes = @Index(name = "idx_product_id", columnList = "product_id"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockEntity extends BaseEntity {
