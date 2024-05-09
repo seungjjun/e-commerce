@@ -45,13 +45,22 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation 'org.redisson:redisson-spring-boot-starter:3.29.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
     compileOnly 'org.projectlombok:lombok'
+
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
+
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:testcontainers:1.19.8"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.8"
+    testImplementation "com.redis:testcontainers-redis:2.2.2"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
