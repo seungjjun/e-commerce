@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
+import com.hanghae.ecommerce.api.dto.response.CartItemResult;
 import com.hanghae.ecommerce.application.cart.CartUseCase;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
 import com.hanghae.ecommerce.domain.order.OrderItemReader;
@@ -199,5 +200,36 @@ class OrderIntegrationTest {
 
 		Stock stock = stockReader.readByProductId(productId);
 		assertThat(stock.stockQuantity()).isEqualTo(10L);
+	}
+
+	@Test
+	@DisplayName("결제 실패로 인한 상품 주문 실패 시 장바구니 롤백 테스트")
+	void when_failed_order_then_roll_back_cart_item() {
+		// Given
+		Long paymentAmount = 999_999L;
+
+		OrderRequest request = new OrderRequest(
+			new Receiver(
+				"홍길동",
+				"서울특별시 송파구",
+				"01012345678"
+			),
+			paymentAmount,
+			"CARD"
+		);
+
+		CartItemResult initCart = cartUseCase.getCartItems(userId1);
+		assertThat(initCart.cartItems().isEmpty()).isFalse();
+		assertThat(initCart.cartItems().size()).isEqualTo(1);
+
+		// When
+		assertThrows(RuntimeException.class, () -> {
+			orderUseCase.order(userId1, request);
+		});
+
+		// Then
+		CartItemResult afterOrderFailedCart = cartUseCase.getCartItems(userId1);
+		assertThat(afterOrderFailedCart.cartItems().isEmpty()).isFalse();
+		assertThat(initCart.cartItems().size()).isEqualTo(1);
 	}
 }
