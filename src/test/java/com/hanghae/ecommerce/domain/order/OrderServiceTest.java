@@ -57,7 +57,7 @@ class OrderServiceTest {
 		given(orderAppender.append(any(), any(), any())).willReturn(readyOrder);
 
 		// When
-		Order order = orderService.order(user, cart, request);
+		Order order = orderService.order(user.id(), cart, request);
 
 		// Then
 		assertThat(order).isNotNull();

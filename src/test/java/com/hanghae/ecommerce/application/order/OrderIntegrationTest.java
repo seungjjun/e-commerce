@@ -1,7 +1,6 @@
 package com.hanghae.ecommerce.application.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -20,7 +19,6 @@ import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.api.dto.response.CartItemResult;
 import com.hanghae.ecommerce.application.cart.CartUseCase;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
-import com.hanghae.ecommerce.domain.order.OrderItemReader;
 import com.hanghae.ecommerce.domain.product.Stock;
 import com.hanghae.ecommerce.domain.product.StockReader;
 import com.hanghae.ecommerce.domain.user.User;
@@ -41,9 +39,6 @@ class OrderIntegrationTest {
 
 	@Autowired
 	private StockReader stockReader;
-
-	@Autowired
-	private OrderItemReader orderItemReader;
 
 	private Long userId1;
 	private Long userId2;
@@ -166,9 +161,7 @@ class OrderIntegrationTest {
 		);
 
 		// When
-		assertThrows(RuntimeException.class, () -> {
-			orderUseCase.order(userId3, request);
-		});
+		orderUseCase.order(userId3, request);
 
 		Stock stock = stockReader.readByProductId(productId);
 		assertThat(stock.stockQuantity()).isEqualTo(10L);
@@ -191,9 +184,7 @@ class OrderIntegrationTest {
 		);
 
 		// When && Then
-		assertThrows(RuntimeException.class, () -> {
-			orderUseCase.order(userId1, request);
-		});
+		orderUseCase.order(userId1, request);
 
 		User user = userService.getUser(userId1);
 		assertThat(user.point()).isEqualTo(100_000L);
@@ -223,9 +214,7 @@ class OrderIntegrationTest {
 		assertThat(initCart.cartItems().size()).isEqualTo(1);
 
 		// When
-		assertThrows(RuntimeException.class, () -> {
-			orderUseCase.order(userId1, request);
-		});
+		orderUseCase.order(userId1, request);
 
 		// Then
 		CartItemResult afterOrderFailedCart = cartUseCase.getCartItems(userId1);

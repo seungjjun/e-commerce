@@ -12,6 +12,8 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password:
+    hikari:
+      maximum-pool-size: 15
 
   jpa:
     defer-datasource-initialization: true

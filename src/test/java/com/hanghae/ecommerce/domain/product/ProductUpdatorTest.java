@@ -49,7 +49,7 @@ class ProductUpdatorTest {
 			50_000L, List.of(item),
 			"이름", "주소",
 			"번호", OrderStatus.PAID.toString(),
-			LocalDateTime.now());
+			"CARD", LocalDateTime.now());
 
 		// When
 		productUpdator.updateStock(products, order);

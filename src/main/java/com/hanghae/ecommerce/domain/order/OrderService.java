@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.cart.Cart;
-import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.storage.order.OrderItemStatus;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 
@@ -20,8 +19,8 @@ public class OrderService {
 	private final OrderUpdater orderUpdater;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public Order order(User user, Cart cart, OrderRequest request) {
-		return orderAppender.append(user, cart, request);
+	public Order order(Long userId, Cart cart, OrderRequest request) {
+		return orderAppender.append(userId, cart, request);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
