@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class OrderEventPublisher {
-	private final ApplicationEventPublisher applicationEventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public void publishEvent(OrderCreatedEvent event) {
-		applicationEventPublisher.publishEvent(event);
+		eventPublisher.publishEvent(event);
 	}
 }

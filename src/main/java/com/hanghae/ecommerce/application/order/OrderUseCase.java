@@ -1,8 +1,10 @@
 package com.hanghae.ecommerce.application.order;
 
+import com.hanghae.ecommerce.domain.outbox.OutboxService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.cart.Cart;
 import com.hanghae.ecommerce.domain.cart.CartService;
@@ -20,13 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderUseCase {
 	private final CartService cartService;
 	private final OrderService orderService;
+	private final OutboxService outboxService;
 	private final OrderEventPublisher orderEventPublisher;
 
 	@Transactional
-	public Order order(Long userId, OrderRequest request) {
+	public Order order(Long userId, OrderRequest request) throws JsonProcessingException {
 		Cart cart = cartService.getCart(userId);
 		Order order = orderService.order(userId, cart, request);
 
+		outboxService.recordOrderOutbox(order);
 		orderEventPublisher.publishEvent(new OrderCreatedEvent(order));
 		return order;
 	}

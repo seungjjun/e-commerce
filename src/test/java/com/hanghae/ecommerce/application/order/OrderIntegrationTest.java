@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.application.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -84,6 +85,8 @@ class OrderIntegrationTest {
 		executor.submit(() -> {
 			try {
 				orderUseCase.order(userId1, request);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
 			} finally {
 				latch.countDown();
 			}
@@ -92,6 +95,8 @@ class OrderIntegrationTest {
 		executor.submit(() -> {
 			try {
 				orderUseCase.order(userId2, request);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
 			} finally {
 				latch.countDown();
 			}
@@ -132,6 +137,8 @@ class OrderIntegrationTest {
 			executor.submit(() -> {
 				try {
 					orderUseCase.order(userId1, request);
+				} catch (JsonProcessingException e) {
+					throw new RuntimeException(e);
 				} finally {
 					latch.countDown();
 				}
@@ -148,7 +155,7 @@ class OrderIntegrationTest {
 
 	@Test
 	@DisplayName("재고 부족으로 인한 실패 시 재고 롤백 테스트")
-	void when_not_enough_product_stock_then_roll_back_product_stock() {
+	void when_not_enough_product_stock_then_roll_back_product_stock() throws JsonProcessingException {
 		// Given
 		OrderRequest request = new OrderRequest(
 			new Receiver(
@@ -169,7 +176,7 @@ class OrderIntegrationTest {
 
 	@Test
 	@DisplayName("잔액 부족으로 인한 실패 시 재고 및 잔액 롤백 테스트")
-	void when_not_enough_user_point_then_roll_back_user_point() {
+	void when_not_enough_user_point_then_roll_back_user_point() throws JsonProcessingException {
 		// Given
 		Long paymentAmount = 999_999L;
 
@@ -195,7 +202,7 @@ class OrderIntegrationTest {
 
 	@Test
 	@DisplayName("결제 실패로 인한 상품 주문 실패 시 장바구니 롤백 테스트")
-	void when_failed_order_then_roll_back_cart_item() {
+	void when_failed_order_then_roll_back_cart_item() throws JsonProcessingException {
 		// Given
 		Long paymentAmount = 999_999L;
 

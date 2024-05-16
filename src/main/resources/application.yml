@@ -31,6 +31,8 @@ management:
     web:
       base-path: /
 
+server:
+  port: 8081
 ---
 spring:
   config:
@@ -50,7 +52,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-    defer-datasource-initialization: true
     show-sql: true
 
 ---

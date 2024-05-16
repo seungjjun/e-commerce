@@ -7,7 +7,7 @@ import com.hanghae.ecommerce.domain.cart.NewCartItem;
 
 public record CartItemRequest(List<CartItem> cartItems) {
 	public record CartItem(Long productId,
-							Long quantity) {
+						   Long quantity) {
 	}
 
 	public List<NewCartItem> toNewCartItem() {
