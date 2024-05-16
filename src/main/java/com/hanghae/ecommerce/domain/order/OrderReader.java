@@ -10,7 +10,7 @@ public class OrderReader {
 
 	private final OrderRepository orderRepository;
 
-	public Order read(Order order) {
-		return orderRepository.findById(order.id());
+	public Order read(Long orderId) {
+		return orderRepository.findById(orderId);
 	}
 }

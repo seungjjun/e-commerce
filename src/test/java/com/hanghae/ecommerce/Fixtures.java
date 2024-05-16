@@ -60,30 +60,35 @@ public class Fixtures {
 				"홍길동",
 				"서울특별시 송파구",
 				"01012345678",
+				PayType.CARD.toString(),
 				OrderStatus.READY.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.PAID)) {
 			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678", OrderStatus.PAID.toString(),
+				PayType.CARD.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.PAY_FAILED)) {
 			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
 				OrderStatus.PAY_FAILED.toString(),
+				PayType.CARD.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.FAIL)) {
 			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
 				OrderStatus.CANCELED.toString(),
+				PayType.CARD.toString(),
 				LocalDateTime.now());
 		}
 
 		if (orderStatus.equals(OrderStatus.CANCELED)) {
 			return new Order(1L, 1L, 89_000L, List.of(), "홍길동", "서울특별시 송파구", "01012345678",
 				OrderStatus.CANCELED.toString(),
+				PayType.CARD.toString(),
 				LocalDateTime.now());
 		}
 

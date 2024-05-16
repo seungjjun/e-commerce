@@ -5,6 +5,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
+import com.hanghae.ecommerce.storage.order.OrderStatus;
+import com.hanghae.ecommerce.storage.payment.PayType;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +50,7 @@ class CartServiceTest {
 		given(cartFinder.findByUserId(any())).willReturn(cart);
 
 		// When
-		Cart foundCart = cartService.getCart(user);
+		Cart foundCart = cartService.getCart(user.id());
 
 		// Then
 		assertThat(foundCart).isNotNull();
@@ -152,9 +157,43 @@ class CartServiceTest {
 		User user = Fixtures.user(1L);
 
 		// When
-		cartService.resetCart(user);
+		cartService.resetCart(user.id());
 
 		// Then
 		verify(cartItemRemover, atLeastOnce()).resetCart(any());
+	}
+
+	@Test
+	@DisplayName("장바구니의 상품을 롤백한다.")
+	void compensate_cart_items() {
+		// Given
+		Long userId = 1L;
+		Product product = Fixtures.product("후드티");
+
+		Cart cart = new Cart(1L, userId, List.of(
+			new CartItem(1L, product.id(), 5L)
+		));
+
+		Order order = new Order(
+			1L,
+			1L,
+			89_000L,
+			List.of(
+				new OrderItem(1L, 1L, 1L, "후드티", 39_000L, 39_000L, 1L, "CREATED")
+			),
+			"홍길동",
+			"서울특별시 송파구",
+			"01012345678",
+			PayType.CARD.toString(),
+			OrderStatus.READY.toString(),
+			LocalDateTime.now());
+
+		given(cartFinder.findByUserId(any())).willReturn(cart);
+
+		// When
+		cartService.compensateCartItems(order);
+
+		// Then
+		verify(cartItemAppender, atLeastOnce()).addItem(any(), anyList());
 	}
 }

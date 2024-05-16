@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+import com.hanghae.ecommerce.domain.payment.event.PaymentEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ class PaymentServiceTest {
 	private OrderUpdater orderUpdater;
 	private PaymentAppender paymentAppender;
 	private UserPointManager userPointManager;
+	private PaymentEventPublisher paymentEventPublisher;
 
 	private Long userId;
 	private Long orderId;
@@ -37,9 +39,10 @@ class PaymentServiceTest {
 		orderUpdater = mock(OrderUpdater.class);
 		paymentAppender = mock(PaymentAppender.class);
 		userPointManager = mock(UserPointManager.class);
+		paymentEventPublisher = mock(PaymentEventPublisher.class);
 
 		paymentService =
-			new PaymentService(orderUpdater, paymentAppender, userPointManager);
+			new PaymentService(orderUpdater, paymentAppender, userPointManager, paymentEventPublisher);
 
 		userId = 1L;
 		orderId = 1L;
@@ -67,12 +70,12 @@ class PaymentServiceTest {
 		given(paymentAppender.create(any(), any(), any())).willReturn(payment);
 
 		// When
-		Payment paid = paymentService.pay(user, order, request);
+		paymentService.pay(order);
 
 		// Then
-		assertThat(paid).isNotNull();
-		assertThat(paid.payAmount()).isEqualTo(89_000L);
-		assertThat(paid.paymentMethod()).isEqualTo("CARD");
+//		assertThat(paid).isNotNull();
+//		assertThat(paid.payAmount()).isEqualTo(89_000L);
+//		assertThat(paid.paymentMethod()).isEqualTo("CARD");
 
 		verify(userPointManager, atLeastOnce()).usePoint(any(), any());
 		verify(orderUpdater, atLeastOnce()).changeStatus(any(), any());

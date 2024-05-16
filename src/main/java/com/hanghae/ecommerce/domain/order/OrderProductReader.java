@@ -20,6 +20,10 @@ public class OrderProductReader {
 
 	public List<OrderProduct> read(Cart cart) {
 		List<OrderProduct> orderProducts = new ArrayList<>();
+		if (cart.items().isEmpty()) {
+			throw new EntityNotFoundException("장바구니에 담긴 상품이 존재하지 않습니다.");
+		}
+
 		productReader.readAllByIds(cart.items().stream().map(CartItem::productId).toList())
 			.forEach(product -> {
 				CartItem item = cart.items().stream().filter(cartItem -> cartItem.productId().equals(product.id()))

@@ -24,16 +24,18 @@ class OrderServiceTest {
 	private OrderService orderService;
 	private OrderAppender orderAppender;
 	private OrderUpdater orderUpdater;
+	private OrderReader orderReader;
 
 	private User user;
 	private OrderRequest request;
 
 	@BeforeEach
 	void setUp() {
+		orderReader = mock(OrderReader.class);
 		orderAppender = mock(OrderAppender.class);
 		orderUpdater = mock(OrderUpdater.class);
 
-		orderService = new OrderService(orderAppender, orderUpdater);
+		orderService = new OrderService(orderReader, orderAppender, orderUpdater);
 
 		user = Fixtures.user(1L);
 		request = new OrderRequest(
@@ -57,7 +59,7 @@ class OrderServiceTest {
 		given(orderAppender.append(any(), any(), any())).willReturn(readyOrder);
 
 		// When
-		Order order = orderService.order(user, cart, request);
+		Order order = orderService.order(user.id(), cart, request);
 
 		// Then
 		assertThat(order).isNotNull();

@@ -76,6 +76,7 @@ class OrderAppenderTest {
 			orderRequest.receiver().name(),
 			orderRequest.receiver().address(),
 			orderRequest.receiver().phoneNumber(),
+			"CARD",
 			OrderStatus.READY.toString(),
 			LocalDateTime.now());
 
@@ -84,7 +85,7 @@ class OrderAppenderTest {
 		given(orderRepository.create(any(), any())).willReturn(order);
 
 		// When
-		Order createdOrder = orderAppender.append(user, cart, orderRequest);
+		Order createdOrder = orderAppender.append(user.id(), cart, orderRequest);
 
 		// Then
 		assertThat(createdOrder.orderStatus()).isEqualTo("READY");

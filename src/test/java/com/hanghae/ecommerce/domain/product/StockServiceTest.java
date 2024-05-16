@@ -9,9 +9,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.domain.cart.CartItemRemover;
 import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.domain.order.OrderReader;
+import com.hanghae.ecommerce.domain.order.OrderUpdater;
+import com.hanghae.ecommerce.domain.product.event.StockEventPublisher;
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 
 class StockServiceTest {
@@ -20,6 +23,9 @@ class StockServiceTest {
 	private StockValidator stockValidator;
 	private StockUpdator stockUpdator;
 	private OrderReader orderReader;
+	private OrderUpdater orderUpdater;
+	private CartItemRemover cartItemRemover;
+	private StockEventPublisher eventPublisher;
 
 	@BeforeEach
 	void setUp() {
@@ -27,8 +33,14 @@ class StockServiceTest {
 		stockValidator = mock(StockValidator.class);
 		stockUpdator = mock(StockUpdator.class);
 		orderReader = mock(OrderReader.class);
+		orderUpdater = mock(OrderUpdater.class);
+		cartItemRemover = mock(CartItemRemover.class);
+		eventPublisher = mock(StockEventPublisher.class);
 
-		stockService = new StockService(stockReader, stockValidator, stockUpdator, orderReader);
+//		 TODO 상품 재고 차감 테스트
+		stockService =
+			new StockService(stockReader, stockValidator, stockUpdator, orderReader, orderUpdater, cartItemRemover,
+				eventPublisher);
 	}
 
 	@Test

@@ -9,7 +9,6 @@ import com.hanghae.ecommerce.domain.order.Order;
 import com.hanghae.ecommerce.domain.order.OrderForm;
 import com.hanghae.ecommerce.domain.order.OrderItem;
 import com.hanghae.ecommerce.domain.order.OrderRepository;
-import com.hanghae.ecommerce.domain.user.User;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -35,13 +34,14 @@ public class OrderCoreRepository implements OrderRepository {
 	}
 
 	@Override
-	public Order create(User user, OrderForm orderForm) {
+	public Order create(Long userId, OrderForm orderForm) {
 		OrderEntity order = orderJpaRepository.save(new OrderEntity(
-			user.id(),
+			userId,
 			orderForm.payAmount(),
 			orderForm.receiverName(),
 			orderForm.address(),
 			orderForm.phoneNumber(),
+			orderForm.paymentMethod(),
 			OrderStatus.READY,
 			LocalDateTime.now()
 		));
