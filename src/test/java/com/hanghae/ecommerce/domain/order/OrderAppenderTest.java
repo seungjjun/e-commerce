@@ -2,6 +2,7 @@ package com.hanghae.ecommerce.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -44,11 +45,6 @@ class OrderAppenderTest {
 		Product product1 = Fixtures.product("후드티");
 		Product product2 = Fixtures.product("맨투맨");
 
-		Cart cart = new Cart(1L, user.id(), List.of(
-			new CartItem(1L, product1.id(), 5L),
-			new CartItem(1L, product2.id(), 3L)
-		));
-
 		List<OrderProduct> orderProducts = List.of(
 			new OrderProduct(product1.id(), product1.name(), product1.price(), product1.orderTotalPrice(5L), 5L),
 			new OrderProduct(product2.id(), product2.name(), product2.price(), product2.orderTotalPrice(3L), 3L));
@@ -58,6 +54,10 @@ class OrderAppenderTest {
 				user.name(),
 				user.address(),
 				user.phoneNumber()
+			),
+			List.of(
+				new OrderRequest.ProductRequest(product1.id(), 5L),
+				new OrderRequest.ProductRequest(product2.id(), 3L)
 			),
 			50_000L,
 			"CARD"
@@ -76,15 +76,16 @@ class OrderAppenderTest {
 			orderRequest.receiver().name(),
 			orderRequest.receiver().address(),
 			orderRequest.receiver().phoneNumber(),
+			"CARD",
 			OrderStatus.READY.toString(),
 			LocalDateTime.now());
 
 
-		given(orderProductReader.read(any())).willReturn(orderProducts);
+		given(orderProductReader.read(anyList())).willReturn(orderProducts);
 		given(orderRepository.create(any(), any())).willReturn(order);
 
 		// When
-		Order createdOrder = orderAppender.append(user, cart, orderRequest);
+		Order createdOrder = orderAppender.append(user.id(), orderRequest);
 
 		// Then
 		assertThat(createdOrder.orderStatus()).isEqualTo("READY");

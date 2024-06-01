@@ -31,6 +31,8 @@ public class OrderEntity extends BaseEntity {
 
 	private String phoneNumber;
 
+	private String paymentMethod;
+
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
@@ -41,6 +43,7 @@ public class OrderEntity extends BaseEntity {
 					   String receiverName,
 					   String address,
 					   String phoneNumber,
+					   String paymentMethod,
 					   OrderStatus orderStatus,
 					   LocalDateTime orderedAt) {
 		this.userId = userId;
@@ -48,13 +51,18 @@ public class OrderEntity extends BaseEntity {
 		this.receiverName = receiverName;
 		this.address = address;
 		this.phoneNumber = phoneNumber;
+		this.paymentMethod = paymentMethod;
 		this.orderStatus = orderStatus;
 		this.orderedAt = orderedAt;
 	}
 
 	public Order toOrder(List<OrderItem> items) {
-		return new Order(getId(), userId, payAmount, items, receiverName, address, phoneNumber, orderStatus.toString(),
-			orderedAt);
+		return new Order(
+			getId(), userId,
+			payAmount, items,
+			receiverName, address,
+			phoneNumber, paymentMethod,
+			orderStatus.toString(), orderedAt);
 	}
 
 	public void updateStatus(OrderStatus orderStatus) {

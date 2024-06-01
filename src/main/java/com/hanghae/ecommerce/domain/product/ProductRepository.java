@@ -12,7 +12,7 @@ import com.hanghae.ecommerce.storage.product.ProductEntity;
 public interface ProductRepository {
 	List<Product> findAll();
 
-	Optional<ProductEntity> findById(Long productId);
+	Product findById(Long productId);
 
 	List<Product> findByIdIn(List<Long> productIds);
 

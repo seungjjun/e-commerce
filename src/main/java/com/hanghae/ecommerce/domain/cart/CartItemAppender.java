@@ -20,11 +20,8 @@ public class CartItemAppender {
 			Optional<CartItemEntity> cartItemEntity =
 				cartItemRepository.findByCartIdAndProductId(cart.id(), cartItem.productId());
 
-			if (cartItemEntity.isEmpty()) {
-				cartItemRepository.addItem(cart, cartItem);
-			} else {
-				cartItemEntity.get().addQuantity(cartItem.quantity());
-			}
+			cartItemEntity.ifPresentOrElse(item -> item.addQuantity(cartItem.quantity()),
+				() -> cartItemRepository.addItem(cart, cartItem));
 		}
 	}
 }

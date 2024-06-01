@@ -55,7 +55,7 @@ class UserPointManagerTest {
 		given(userRepository.updateUserPoint(any())).willReturn(user.minusPoint(payAmount));
 
 		// When
-		User usedPoint = userPointManager.usePoint(user, payAmount);
+		User usedPoint = userPointManager.usePoint(user.id(), payAmount);
 
 		// Then
 		assertThat(usedPoint.point()).isEqualTo(50_000L - 10_000L);

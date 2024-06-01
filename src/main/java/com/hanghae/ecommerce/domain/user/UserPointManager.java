@@ -1,10 +1,13 @@
 package com.hanghae.ecommerce.domain.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Component
+@Slf4j
 public class UserPointManager {
 	private final UserReader userReader;
 	private final UserRepository userRepository;
@@ -21,8 +24,10 @@ public class UserPointManager {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public User usePoint(User user, Long payAmount) {
-		User foundUser = userReader.readByIdWithLock(user.id());
+	public User usePoint(Long userId, Long payAmount) {
+		log.info("use Thread: {}", Thread.currentThread());
+		log.info("use Transaction: {}", TransactionSynchronizationManager.getCurrentTransactionName());
+		User foundUser = userReader.readByIdWithLock(userId);
 		foundUser.isEnoughPointForPay(payAmount);
 		return userRepository.updateUserPoint(foundUser.minusPoint(payAmount));
 	}

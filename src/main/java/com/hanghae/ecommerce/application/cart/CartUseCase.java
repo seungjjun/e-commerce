@@ -30,7 +30,7 @@ public class CartUseCase {
 	public CartItemResult getCartItems(Long userId) {
 		User user = userService.getUser(userId);
 
-		Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user.id());
 
 		List<CartItem> cartItems = cartService.getAllCartItems(cart);
 
@@ -43,7 +43,7 @@ public class CartUseCase {
 	public void addItem(Long userId, List<NewCartItem> cartItems) {
 		User user = userService.getUser(userId);
 
-		Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user.id());
 
 		productService.checkProductStockForAddToCart(cartItems);
 
@@ -54,7 +54,7 @@ public class CartUseCase {
 	public void deleteItem(Long userId, List<Long> cartItemIds) {
 		User user = userService.getUser(userId);
 
-		Cart cart = cartService.getCart(user);
+		Cart cart = cartService.getCart(user.id());
 
 		List<CartItem> cartItems = cartService.getCartItemsByIds(cart, cartItemIds);
 
