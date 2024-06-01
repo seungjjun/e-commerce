@@ -1,6 +1,5 @@
 package com.hanghae.ecommerce.domain.order;
 
-import com.hanghae.ecommerce.domain.cart.CartItem;
 import com.hanghae.ecommerce.domain.product.Product;
 
 public record OrderProduct(
@@ -10,12 +9,12 @@ public record OrderProduct(
 	Long totalPrice,
 	Long quantity
 ) {
-	public static OrderProduct of(Product product, CartItem cartItem) {
+	public static OrderProduct of(Product product, Long quantity) {
 		return new OrderProduct(
 			product.id(),
 			product.name(),
 			product.price(),
-			product.orderTotalPrice(cartItem.quantity()),
-			cartItem.quantity());
+			product.orderTotalPrice(quantity),
+			quantity);
 	}
 }

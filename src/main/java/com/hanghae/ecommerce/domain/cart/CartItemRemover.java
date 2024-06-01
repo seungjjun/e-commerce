@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.hanghae.ecommerce.domain.user.User;
-
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -21,7 +19,7 @@ public class CartItemRemover {
 		);
 	}
 
-	public void resetCart(User user) {
-		cartRepository.resetCart(user);
+	public void resetCart(Long userId) {
+		cartRepository.resetCart(userId);
 	}
 }

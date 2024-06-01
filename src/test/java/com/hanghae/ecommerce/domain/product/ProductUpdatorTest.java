@@ -30,11 +30,6 @@ class ProductUpdatorTest {
 	@DisplayName("상품의 재고를 업데이트 한다.")
 	void update_product_stock() {
 		// Given
-		List<Product> products = List.of(
-			Fixtures.product("후드티"),
-			Fixtures.product("맨투맨")
-		);
-
 		Product product = mock(Product.class);
 
 		given(product.id()).willReturn(1L);
@@ -49,10 +44,12 @@ class ProductUpdatorTest {
 			50_000L, List.of(item),
 			"이름", "주소",
 			"번호", OrderStatus.PAID.toString(),
-			LocalDateTime.now());
+			"CARD", LocalDateTime.now());
+
+		given(productRepository.findById(any())).willReturn(product);
 
 		// When
-		productUpdator.updateStock(products, order);
+		productUpdator.updateStock(order);
 
 		// Then
 		verify(productRepository, atLeast(1)).updateStock(any());

@@ -23,7 +23,7 @@ class ProductCoreRepositoryTest {
 	void testProductLifecycle() {
 		// 상품 조회
 		Long productId = 1L;
-		Product product = productCoreRepository.findById(productId).get().toProduct();
+		Product product = productCoreRepository.findById(productId);
 		assertThat(product.name()).isEqualTo("후드티");
 		assertThat(product.stockQuantity()).isEqualTo(100L);
 
@@ -40,7 +40,7 @@ class ProductCoreRepositoryTest {
 		productCoreRepository.updateStock(updatedStock);
 
 		// 업데이트된 재고 확인
-		product = productCoreRepository.findById(productId).get().toProduct();
+		product = productCoreRepository.findById(productId);
 		assertThat(product.stockQuantity()).isEqualTo(3L);
 	}
 }
