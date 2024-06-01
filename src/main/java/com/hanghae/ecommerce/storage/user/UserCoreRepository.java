@@ -1,13 +1,16 @@
 package com.hanghae.ecommerce.storage.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import com.hanghae.ecommerce.domain.user.User;
 import com.hanghae.ecommerce.domain.user.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Repository
+@Slf4j
 public class UserCoreRepository implements UserRepository {
 	private final UserJpaRepository userJpaRepository;
 

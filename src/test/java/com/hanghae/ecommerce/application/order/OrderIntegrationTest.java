@@ -1,8 +1,10 @@
 package com.hanghae.ecommerce.application.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.hanghae.ecommerce.api.dto.response.CartItemResult;
+import com.hanghae.ecommerce.domain.product.StockService;
+import com.hanghae.ecommerce.domain.user.UserReader;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +21,6 @@ import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.request.Receiver;
 import com.hanghae.ecommerce.application.cart.CartUseCase;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
-import com.hanghae.ecommerce.domain.order.OrderItemReader;
 import com.hanghae.ecommerce.domain.product.Stock;
 import com.hanghae.ecommerce.domain.product.StockReader;
 import com.hanghae.ecommerce.domain.user.User;
@@ -41,93 +42,54 @@ class OrderIntegrationTest {
 	@Autowired
 	private StockReader stockReader;
 
-	@Autowired
-	private OrderItemReader orderItemReader;
-
-	private Long userId1;
-	private Long userId2;
-	private Long userId3;
-	private Long productId;
-
-	@BeforeEach
-	void setUp() {
-		userId1 = 1L;
-		userId2 = 2L;
-		userId3 = 3L;
-
-		productId = 2L;
-		Long orderQuantity = 1L;
-
-		cartUseCase.addItem(userId1, List.of(new NewCartItem(productId, orderQuantity)));
-		cartUseCase.addItem(userId2, List.of(new NewCartItem(productId, orderQuantity)));
-		cartUseCase.addItem(userId3, List.of(
-			new NewCartItem(productId, orderQuantity),
-			new NewCartItem(productId, 10L)
-		));
-	}
-
 	@Test
-	@DisplayName("동시에 2건의 주문 시 재고 감소 테스트")
-	void when_concurrent_two_order_then_decrease_stock() throws InterruptedException {
+	void order_test() throws InterruptedException {
 		// Given
-		int numThreads = 2;
-		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-		CountDownLatch latch = new CountDownLatch(numThreads);
-
+		Long productId = 2L;
+		Long userId = 1L;
 		OrderRequest request = new OrderRequest(
 			new Receiver(
 				"홍길동",
 				"서울특별시 송파구",
 				"01012345678"
 			),
-			1000L,
+			List.of(
+				new OrderRequest.ProductRequest(productId, 1L)
+			),
+			100L,
 			"CARD"
 		);
 
 		// When
-		executor.submit(() -> {
-			try {
-				orderUseCase.order(userId1, request);
-			} finally {
-				latch.countDown();
-			}
-		});
+		orderUseCase.order(userId, request);
 
-		executor.submit(() -> {
-			try {
-				orderUseCase.order(userId2, request);
-			} finally {
-				latch.countDown();
-			}
-		});
-
-		latch.await();
-		executor.shutdown();
+		Thread.sleep(1000);
 
 		// Then
-
 		Stock stock = stockReader.readByProductId(productId);
-		assertThat(stock.stockQuantity()).isEqualTo(10L - 1L - 1L);
-
-		User user = userService.getUser(userId1);
-		assertThat(user.point()).isEqualTo(100_000L - 1000L);
+		assertThat(stock.stockQuantity()).isEqualTo(10 - 1);
 	}
 
 	@Test
-	@DisplayName("동시 5건 주문 시 포이트 차감 동시성 테스트")
-	void when_concurrent_five_order_then_decrease_point() throws InterruptedException {
+	@DisplayName("동시에 100건의 주문 테스트")
+	void concurrency_100orders_test() throws InterruptedException {
 		// Given
-		int numThreads = 5;
+		int numThreads = 100;
 		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 		CountDownLatch latch = new CountDownLatch(numThreads);
 
+		Long productId = 1L;
+		Long userId = 1L;
 		OrderRequest request = new OrderRequest(
 			new Receiver(
 				"홍길동",
 				"서울특별시 송파구",
 				"01012345678"
 			),
-			1000L,
+			List.of(
+				new OrderRequest.ProductRequest(productId, 1L)
+			),
+			100L,
 			"CARD"
 		);
 
@@ -135,7 +97,7 @@ class OrderIntegrationTest {
 		for (int i = 0; i < numThreads; i += 1) {
 			executor.submit(() -> {
 				try {
-					orderUseCase.order(userId1, request);
+					orderUseCase.order(userId, request);
 				} finally {
 					latch.countDown();
 				}
@@ -145,8 +107,57 @@ class OrderIntegrationTest {
 		latch.await();
 		executor.shutdown();
 
+		Thread.sleep(1500);
+
 		// Then
-		User user = userService.getUser(userId1);
+		Stock stock = stockReader.readByProductId(productId);
+		assertThat(stock.stockQuantity()).isEqualTo(0);
+
+		User foundUser = userService.getUser(userId);
+		assertThat(foundUser.point()).isEqualTo(100_000L - (100 * 100));
+	}
+
+	@Test
+	@DisplayName("동시 5건 주문 시 포인트 차감 동시성 테스트")
+	void when_concurrent_five_order_then_decrease_point() throws InterruptedException {
+		// Given
+		int numThreads = 5;
+		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+		CountDownLatch latch = new CountDownLatch(numThreads);
+
+		Long productId = 1L;
+		Long userId = 1L;
+		OrderRequest request = new OrderRequest(
+			new Receiver(
+				"홍길동",
+				"서울특별시 송파구",
+				"01012345678"
+			),
+			List.of(
+				new OrderRequest.ProductRequest(productId, 1L)
+			),
+			1000L,
+			"CARD"
+		);
+
+		// When
+		for (int i = 0; i < numThreads; i += 1) {
+			executor.submit(() -> {
+				try {
+					orderUseCase.order(userId, request);
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+
+		latch.await();
+		executor.shutdown();
+
+		Thread.sleep(500);
+
+		// Then
+		User user = userService.getUser(userId);
 		assertThat(user.point()).isEqualTo(100_000L - (1000L * numThreads));
 	}
 
@@ -154,48 +165,58 @@ class OrderIntegrationTest {
 	@DisplayName("재고 부족으로 인한 실패 시 재고 롤백 테스트")
 	void when_not_enough_product_stock_then_roll_back_product_stock() {
 		// Given
-		OrderRequest request = new OrderRequest(
+		Long userId = 1L;
+		Long productId1 = 2L;
+		Long productId2 = 3L;
+		OrderRequest request1 = new OrderRequest(
 			new Receiver(
 				"홍길동",
 				"서울특별시 송파구",
 				"01012345678"
+			),
+			List.of(
+				new OrderRequest.ProductRequest(productId1, 1L),
+				new OrderRequest.ProductRequest(productId2, 10L)
 			),
 			1000L,
 			"CARD"
 		);
 
 		// When
-		assertThrows(RuntimeException.class, () -> {
-			orderUseCase.order(userId3, request);
-		});
+		orderUseCase.order(userId, request1);
 
-		Stock stock = stockReader.readByProductId(productId);
+		Stock stock = stockReader.readByProductId(productId1);
 		assertThat(stock.stockQuantity()).isEqualTo(10L);
 	}
 
 	@Test
 	@DisplayName("잔액 부족으로 인한 실패 시 재고 및 잔액 롤백 테스트")
-	void when_not_enough_user_point_then_roll_back_user_point() {
+	void when_not_enough_user_point_then_roll_back_user_point() throws InterruptedException {
 		// Given
 		Long paymentAmount = 999_999L;
 
+		Long userId = 3L;
+		Long productId = 2L;
 		OrderRequest request = new OrderRequest(
 			new Receiver(
 				"홍길동",
 				"서울특별시 송파구",
 				"01012345678"
 			),
+			List.of(
+				new OrderRequest.ProductRequest(productId, 1L)
+			),
 			paymentAmount,
 			"CARD"
 		);
 
 		// When && Then
-		assertThrows(RuntimeException.class, () -> {
-			orderUseCase.order(userId1, request);
-		});
+		orderUseCase.order(userId, request);
 
-		User user = userService.getUser(userId1);
-		assertThat(user.point()).isEqualTo(100_000L);
+		Thread.sleep(1000);
+
+		User user = userService.getUser(userId);
+		assertThat(user.point()).isEqualTo(1_000L);
 
 		Stock stock = stockReader.readByProductId(productId);
 		assertThat(stock.stockQuantity()).isEqualTo(10L);

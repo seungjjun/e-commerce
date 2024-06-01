@@ -2,7 +2,6 @@ package com.hanghae.ecommerce.domain.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -131,16 +130,12 @@ class ProductServiceTest {
 	@DisplayName("상품 재고를 업데이트 하는 메서드를 호출하는지 검사")
 	void verify_call_product_stock_update_method() {
 		// Given
-		Product product1 = Fixtures.product("후드티");
-		Product product2 = Fixtures.product("맨투맨");
-		List<Product> products = List.of(product1, product2);
-
 		Order order = Fixtures.order(OrderStatus.READY);
 
 		// When
-		productService.updateStockQuantity(products, order);
+		productService.updateStockQuantity(order);
 
 		// Then
-		verify(productUpdator, atLeastOnce()).updateStock(anyList(), any());
+		verify(productUpdator, atLeastOnce()).updateStock(any());
 	}
 }

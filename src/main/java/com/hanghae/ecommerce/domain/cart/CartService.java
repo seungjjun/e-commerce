@@ -1,11 +1,13 @@
 package com.hanghae.ecommerce.domain.cart;
 
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.domain.order.OrderItem;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.hanghae.ecommerce.domain.user.User;
 
 @Service
 public class CartService {
@@ -26,8 +28,8 @@ public class CartService {
 	}
 
 	@Transactional(readOnly = true)
-	public Cart getCart(User user) {
-		return cartFinder.findByUserId(user.id());
+	public Cart getCart(Long userId) {
+		return cartFinder.findByUserId(userId);
 	}
 
 	public void addItemToCart(Cart cart, List<NewCartItem> newCartItem) {
@@ -50,7 +52,17 @@ public class CartService {
 	}
 
 	@Transactional
-	public void resetCart(User user) {
-		cartItemRemover.resetCart(user);
+	public void resetCart(Long userId) {
+		cartItemRemover.resetCart(userId);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void compensateCartItems(Order order) {
+		Cart cart = cartFinder.findByUserId(order.userId());
+		List<NewCartItem> cartItems = new ArrayList<>();
+		for (OrderItem orderItem : order.items()) {
+			cartItems.add(new NewCartItem(orderItem.productId(), orderItem.quantity()));
+		}
+		cartItemAppender.addItem(cart, cartItems);
 	}
 }

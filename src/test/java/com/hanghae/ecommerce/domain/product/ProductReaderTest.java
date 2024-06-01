@@ -6,14 +6,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
-import com.hanghae.ecommerce.storage.product.ProductEntity;
 
 class ProductReaderTest {
 	private ProductReader productReader;
@@ -52,8 +50,8 @@ class ProductReaderTest {
 
 		Product product = Fixtures.product("맨투맨");
 
-		given(productRepository.findById(any())).willReturn(Optional.of(
-			new ProductEntity(product.name(), product.price(), product.description(), product.stockQuantity())));
+		given(productRepository.findById(any())).willReturn(
+			new Product(productId, product.name(), product.price(), product.description(), product.stockQuantity()));
 
 		// When
 		Product foundProduct = productReader.readById(productId);

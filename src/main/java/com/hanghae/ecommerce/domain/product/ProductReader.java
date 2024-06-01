@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.hanghae.ecommerce.storage.order.OrderStatus;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Component
 public class ProductReader {
 	private final ProductRepository productRepository;
@@ -24,9 +22,7 @@ public class ProductReader {
 	}
 
 	public Product readById(Long productId) {
-		return productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품 정보를 찾지 못했습니다. - id: " + productId))
-			.toProduct();
+		return productRepository.findById(productId);
 	}
 
 	public List<Product> readAllByIds(List<Long> productIds) {

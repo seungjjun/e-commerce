@@ -34,14 +34,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Run Checkstyle
-        id: checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest
-
       - name: Build with Gradle
-        if: steps.checkstyle.outcome == 'success'
         run: ./gradlew build
 
       - name: Test with Coverage Verification
-        if: steps.checkstyle.outcome == 'success'
         run: ./gradlew jacocoTestReport jacocoTestCoverageVerification

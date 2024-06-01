@@ -42,6 +42,9 @@ class OrderServiceTest {
 				user.address(),
 				user.phoneNumber()
 			),
+			List.of(
+				new OrderRequest.ProductRequest(1L, 1L)
+			),
 			50_000L,
 			"CARD"
 		);
@@ -52,12 +55,11 @@ class OrderServiceTest {
 	void create_order() {
 		// Given
 		Order readyOrder = Fixtures.order(OrderStatus.READY);
-		Cart cart = new Cart(1L, user.id(), List.of());
 
-		given(orderAppender.append(any(), any(), any())).willReturn(readyOrder);
+		given(orderAppender.append(any(), any())).willReturn(readyOrder);
 
 		// When
-		Order order = orderService.order(user, cart, request);
+		Order order = orderService.order(user.id(), request);
 
 		// Then
 		assertThat(order).isNotNull();

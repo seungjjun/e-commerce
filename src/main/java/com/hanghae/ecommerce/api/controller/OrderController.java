@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hanghae.ecommerce.api.dto.OrderPaidResult;
 import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.api.dto.response.OrderResponse;
 import com.hanghae.ecommerce.application.order.OrderUseCase;
+import com.hanghae.ecommerce.domain.order.Order;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class OrderController {
 	@PostMapping("/{userId}")
 	@ResponseStatus(HttpStatus.CREATED)
 	public OrderResponse order(@PathVariable Long userId, @Valid @RequestBody OrderRequest request) {
-		OrderPaidResult orderPaidResult = orderUseCase.order(userId, request);
-		return OrderResponse.from(orderPaidResult);
+		Order order = orderUseCase.order(userId, request);
+		return OrderResponse.from(order);
 	}
 }
