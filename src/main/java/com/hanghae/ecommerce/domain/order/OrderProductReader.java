@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.hanghae.ecommerce.domain.cart.Cart;
-import com.hanghae.ecommerce.domain.cart.CartItem;
+import com.hanghae.ecommerce.api.dto.request.OrderRequest;
 import com.hanghae.ecommerce.domain.product.ProductReader;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -18,14 +16,13 @@ public class OrderProductReader {
 
 	private final ProductReader productReader;
 
-	public List<OrderProduct> read(Cart cart) {
+	public List<OrderProduct> read(List<OrderRequest.ProductRequest> productRequests) {
 		List<OrderProduct> orderProducts = new ArrayList<>();
-		productReader.readAllByIds(cart.items().stream().map(CartItem::productId).toList())
-			.forEach(product -> {
-				CartItem item = cart.items().stream().filter(cartItem -> cartItem.productId().equals(product.id()))
-					.findFirst()
-					.orElseThrow(() -> new EntityNotFoundException("장바구니에 담긴 상품이 존재하지 않습니다."));
-				orderProducts.add(OrderProduct.of(product, item));
+		productReader.readAllByIds(productRequests.stream().map(OrderRequest.ProductRequest::id).toList())
+			.forEach(p -> {
+				OrderRequest.ProductRequest productRequest =
+					productRequests.stream().filter(request -> p.id().equals(request.id())).findFirst().get();
+				orderProducts.add(OrderProduct.of(p, productRequest.quantity()));
 			});
 		return orderProducts;
 	}

@@ -47,7 +47,7 @@ public class ProductService {
 		productValidator.checkPossibleAddToCart(cartItems);
 	}
 
-	public void updateStockQuantity(List<Product> products, Order order) {
-		productUpdator.updateStock(products, order);
+	public void updateStockQuantity(Order order) {
+		productUpdator.updateStock(order);
 	}
 }

@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.hanghae.ecommerce.Fixtures;
+import com.hanghae.ecommerce.domain.order.Order;
+import com.hanghae.ecommerce.storage.order.OrderStatus;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -36,18 +39,9 @@ class OrderControllerTest {
 	void post_order() throws Exception {
 		// Given
 		Long userId = 1L;
+		Order order = Fixtures.order(OrderStatus.READY);
 
-		OrderPaidResult result = new OrderPaidResult(
-			1L,
-			1L,
-			89_000L,
-			new Receiver("홍길동", "서울특별시 송파구", "01012345678"),
-			"CARD",
-			LocalDateTime.now(),
-			LocalDateTime.now()
-		);
-
-		given(orderUseCase.order(anyLong(), any())).willReturn(result);
+		given(orderUseCase.order(anyLong(), any())).willReturn(order);
 
 		// When && Then
 		mockMvc.perform(post("/orders/" + userId)
@@ -70,12 +64,7 @@ class OrderControllerTest {
 					}
 					"""))
 			.andExpect(status().isCreated())
-			.andExpectAll(
-				jsonPath("$.receiver.name").value("홍길동"),
-				jsonPath("$.receiver.address").value("서울특별시 송파구"),
-				jsonPath("$.payAmount").value(89_000L),
-				jsonPath("$.paymentMethod").value("CARD")
-			);
+			.andExpect(jsonPath("$.orderId").value(1L));
 	}
 
 	@Test

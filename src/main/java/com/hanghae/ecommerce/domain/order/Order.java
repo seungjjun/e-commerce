@@ -13,6 +13,7 @@ public record Order(
 	String receiverName,
 	String address,
 	String phoneNumber,
+	String paymentMethod,
 	String orderStatus,
 	LocalDateTime orderedAt
 ) {
@@ -25,6 +26,7 @@ public record Order(
 			receiverName,
 			address,
 			phoneNumber,
+			paymentMethod,
 			orderStatus.toString(),
 			orderedAt);
 	}

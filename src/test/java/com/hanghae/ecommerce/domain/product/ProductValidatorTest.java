@@ -7,7 +7,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import com.hanghae.ecommerce.Fixtures;
 import com.hanghae.ecommerce.domain.cart.NewCartItem;
-import com.hanghae.ecommerce.storage.product.ProductEntity;
 
 class ProductValidatorTest {
 	private ProductRepository productRepository;
@@ -39,9 +37,8 @@ class ProductValidatorTest {
 			new NewCartItem(product.id(), quantity)
 		);
 
-		given(productRepository.findById(any())).willReturn(Optional.of(
-			new ProductEntity(product.name(), product.price(), product.description(), product.stockQuantity())
-		));
+		given(productRepository.findById(any())).willReturn(
+			new Product(product.id(), product.name(), product.price(), product.description(), product.stockQuantity()));
 
 		// When && Then
 		assertDoesNotThrow(() -> {
@@ -59,9 +56,8 @@ class ProductValidatorTest {
 			new NewCartItem(product.id(), quantity)
 		);
 
-		given(productRepository.findById(any())).willReturn(Optional.of(
-			new ProductEntity(product.name(), product.price(), product.description(), product.stockQuantity())
-		));
+		given(productRepository.findById(any())).willReturn(
+			new Product(product.id(), product.name(), product.price(), product.description(), product.stockQuantity()));
 
 		// When && Then
 		assertThrows(IllegalArgumentException.class, () -> {
