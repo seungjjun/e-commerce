@@ -3,6 +3,7 @@ package com.hanghae.ecommerce.api.dto.request;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.hanghae.ecommerce.api.error.InvalidQuantityException;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,7 @@ class CartItemRequestTest {
 		);
 
 		// When && Then
-		assertThrows(IllegalArgumentException.class, () -> {
+		assertThrows(InvalidQuantityException.class, () -> {
 			cartItemRequest.toNewCartItem();
 		});
 	}

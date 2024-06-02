@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.hanghae.ecommerce.api.error.InsufficientStockException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class ProductValidatorTest {
 			new Product(product.id(), product.name(), product.price(), product.description(), product.stockQuantity()));
 
 		// When && Then
-		assertThrows(IllegalArgumentException.class, () -> {
+		assertThrows(InsufficientStockException.class, () -> {
 			productValidator.checkPossibleAddToCart(cartItems);
 		});
 	}

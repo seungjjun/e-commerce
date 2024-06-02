@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.hanghae.ecommerce.api.error.InsufficientPointException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +53,7 @@ class UserTest {
 		Long payAmount = 999_999L;
 
 		// When && Then
-		assertThrows(IllegalArgumentException.class, () -> {
+		assertThrows(InsufficientPointException.class, () -> {
 			user.isEnoughPointForPay(payAmount);
 		});
 	}
