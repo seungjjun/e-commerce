@@ -4,73 +4,33 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
 
 # 목차
 
-- [마일스톤](#마일스톤)
-- [Git branch 전략](#git-branch-전략)
-    - [서버 환경](#서버-환경-분리)
-    - [브랜치 전략](#브랜치-전략)
+- [활용 기술](#활용-기술)
 - [ERD](#erd)
-- [동시성 문제 유즈케이스 및 해결](https://seungjjun.tistory.com/332)
-- [쿼리 분석 및 인덱스 설계](https://seungjjun.tistory.com/334)
-- [캐시 적용하여 성능 개선](https://seungjjun.tistory.com/335)
-- [API 명세](#api-명세)
-    - [상품 리스트 조회 API](#상품-리스트-조회-api)
-    - [상품 상세 조회 API](#상품-상세-조회-api)
-    - [잔액 충전 API](#잔액-충전-api)
-    - [잔액 조회 API](#잔액-조회-api)
-    - [주문 및 결제 API](#주문-및-결제-api)
-- 시퀀스 다이어그램
-    - [상품 조회](#시퀀스-다이어그램-상품-조회)
-    - [잔액 충전 및 조회](#시퀀스-다이어그램-잔액-충전-및-조회)
-    - [주문 및 결제](#시퀀스-다이어그램-주문-및-결제)
-- [Swagger API Docs](#swagger-api-docs)
+- [작업 내용](#작업 내용)
+- [아키텍처 설계](#아키텍처-설계)
+- [테스트](#테스트)
 - [프로젝트 회고](#프로젝트-회고)
+- [Git branch 전략](https://github.com/seungjjun/e-commerce/wiki/Git-Branch-%EC%A0%84%EB%9E%B5)
+- [API 명세](https://github.com/seungjjun/e-commerce/wiki/E%E2%80%90Commerce-API-Docs)
+- [시퀀스 다이어그램](https://github.com/seungjjun/e-commerce/wiki/%EC%8B%9C%ED%80%80%EC%8A%A4-%EB%8B%A4%EC%9D%B4%EC%96%B4%EA%B7%B8%EB%9E%A8)
+- [트러블 슈팅]()
+    - [동시성 문제 유즈케이스 및 해결](https://seungjjun.tistory.com/332)
+    - [쿼리 분석 및 인덱스 설계](https://seungjjun.tistory.com/334)
+    - [캐시 적용하여 성능 개선](https://seungjjun.tistory.com/335)
+    - [주문 결제 시스템 이벤트 기반 아키텍처 전환 관련 트러블 슈팅](https://seungjjun.tistory.com/328)
 
 ## [마일스톤](https://github.com/seungjjun/e-commerce/milestones)
 
 - [Roadmap](https://github.com/users/seungjjun/projects/4/views/4)
 
-# Git branch 전략
+# 활용 기술
 
-## 서버 환경 분리
-
-`dev` : 자유롭게 기능 개발을 위한 개발 환경
-
-`prod` : 실제 서비스가 운영되는 환경
-
-&#43; `staging` : 실제 운영 환경과 동일한 환경에서 QA 하기 위한 테스트 환경
-
-## 브랜치 전략
-
-`feature`
-
-- 기능 단위 개발 브랜치
-- develop 브랜치 기준으로 생성되는 브랜치로 기능 구현을 하기 위한 브랜치
-- 브랜치명 컨벤션 feat/{issue-number}/{구현 기능명} **(e.g. feat/issue-30/order)**
-
-**feature 브랜치 > develop 브랜치에 merge 기준**
-
-- CI 통과
-- pr 코드리뷰 완료 및 approve 2인 이상
-
-`develop`
-
-- dev 환경에 배포되는 브랜치로, feature 브랜치에서 기능 구현이 완료된 커밋들이 합쳐지는 브랜치
-- develop 브랜치에 커밋 merge 시 dev 환경의 application 배포
-
-`release`
-
-- 배포 대상인 develop 브랜치의 커밋들이 모여 운영 환경과 동일한 환경우로 배포하여 QA 하기 위한 브랜치
-- develop 브랜치에서 개발 및 테스트가 끝나고, production에 배포 되기 전 production과 동일한 환경(staging)에서 테스트하기 위한 브랜치
-
-**main 브랜치에 merge 기준**
-
-- staging 환경에서 테스트 완료
-
-`main`
-
-- release 브랜치에서 테스트가 끝난 후 운영 환경에 배포하는 브랜치
-
-<br />
+- Java 17
+- Spring Boot 3.2.4
+- JPA
+- MySQL
+- Redis
+- H2
 
 # ERD
 
@@ -78,254 +38,47 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
 
 ---
 
-# API 명세
+# 작업 내용
 
-## 상품 리스트 조회 API
+- API 설계 (Github wiki 및 swagger를 통하여 API Docs 제공)
+- 서비스 로직 개발 (주문/충전/메뉴 조회/인기메뉴 조회)
+- 동시성 이슈 / 데이터 일관성 보장을 고려한 서비스 개발
+- 동시에 같은 상품에 대한 주문 시, 상품 재고 및 포인트의 일관성이 깨지는 현상을 막기 위하여 Lock을 활용
+- 인기메뉴를 조회하는 쿼리의 비용을 줄이기 위한 캐시 활용
+- 트랜잭션 범위 최소화 하기 위해 ApplicationEvent 활용
+- 트랜잭션이 커밋된 이후 이벤트 발행을 하기 위한 TransactionalEventListener 활용
 
-### 시퀀스 다이어그램 (상품 조회)
+--- 
 
-<img width="660" alt="image" src="https://github.com/seungjjun/e-commerce/assets/104769120/b4b4a1f1-44a7-4592-a6b0-4b4ff5f6dc44">
+# Architecture 설계
 
-`Endpoint`
+기존 자주 사용하던 Layered Architecture에서는 Service 계층이 Repository의 구현체에 직접 의존하고 있어, Repository의 변화가 Service 계층에도 수정을 필요로 하는 구조가
+문제  
+-> 이는 "하위 계층의 변경은 상위 계층으로 전파되지 않아야 한다"는 원칙에 위배
 
-```
-GET /products
-```
+그래서 하위 계층인 Repository의 변경이 상위 계층으로 전파되지 않도록 추상화된 Repository 인터페이스를 도입하여 구현.  
+Service 계층은 구체적인 Repository 구현체 대신 추상회 된 인터페이스에만 의존하므로, 하위 계층의 변경이 Service 계층에 영향 X
 
-<br/>
+더하여 애플리케이션의 핵심인 비즈니스 로직의 안정성을 보장하기 위해, Presentation 계층은 도메인을 API로 서빙하는 역할을, DataSource 계층은 도메인이 필요로 하는 데이터 관련 기능을 제공하는
+역할을 수행
 
-`Response`
+도메인 로직을 안전하게 보호함과 각 계층을 독립적으로 분리함으로 자신의 역할에 집중하도록 설계함.  
+이 구조는 **DIP와 OCP**을 준수하여 **확장에는 열려 있고 수정에는 닫혀 있는 아키텍처**를 설계.
 
-```json
-{
-  "products": [
-    {
-      "id": 1,
-      "name": "후드티",
-      "price": 52000
-    },
-    ...
-  ]
-}
-```
+---
 
-`HTTP Status Code`
+# 테스트
 
- HTTP Status Code | Description       
-------------------|-------------------
- 200 OK           | 상품 리스트를 정상적으로 불러옴 
+- 주요 도메인 및 컨트롤러 단위 테스트
+- 레포지토리 테스트
+- 통합 테스트
+    - 상품 주문 시 정상적으로 재고 차감 포인트 차감(결제)가 작동하는지 통합 테스트
+    - 주문 동시성 테스트
+    - 재고 부족 시 롤백 테스트
+    - 잔액 부족 시 롤백 테스트
 
-## 상품 상세 조회 API
-
-`Endpoint`
-
-```
-GET /products/{productId}
-```
-
-<br/>
-
-`Response`
-
-```json
-{
-  "id": 1,
-  "name": "후드티",
-  "price": 52000,
-  "stockQuantity": 7,
-  "description": "편한 후드티"
-}
-```
-
-`HTTP Status Code`
-
- HTTP Status Code | Description      
-------------------|------------------
- 200 OK           | 상품 정보를 정상적으로 불러옴 
- 404 Not Found    | 상품 정보를 찾지 못함     
-
-## 잔액 충전 API
-
-### 시퀀스 다이어그램 (잔액 충전 및 조회)
-
-<img width="660" alt="image" src="https://github.com/seungjjun/e-commerce/assets/104769120/e856e939-a34d-43ca-87b5-dd0205eae5de">
-
-
-`Endpoint`
-
-```
-PATCH /accounts/{userId}/charge
-```
-
-<br/>
-
-`Request`
-
-```json
-{
-  "amount": 5000
-}
-```
-
-**patch variable**
-
- 항목     | 필수 여부 | 설명              
---------|-------|-----------------
- userId | Y     | 잔액을 충전할 사용자의 id 
-
-<br/>
-
-`Response`
-
-```json
-{
-  "balance": 5000
-}
-```
-
-<br/>
-
-`HTTP Status Code`
-
- HTTP Status Code | Description              
-------------------|--------------------------
- 200 OK           | 정상적으로 충전 성공              
- 400 Bad Request  | 충전 금액이 잘못됨 (e.g 음수 or 0) 
- 400 Bad Request  | 사용자를 id 값이 올바르지 않음       
-
-<br/>
-
-`Error`
-
-- 잘못된 userId값을 요청받았은 경우
-- 충전 요청 금액이 음수 or 0일 경우
-
-## 잔액 조회 API
-
-`Endpoint`
-
-```
-GET /accounts/{userId}/balance
-```
-
-<br/>
-
-`Request`
-
-**patch variable**
-
- 항목     | 필수 여부 | 설명              
---------|-------|-----------------
- userId | Y     | 잔액을 조회할 사용자의 id 
-
-<br/>
-
-`Response`
-
-```json
-{
-  "balance": 5000
-}
-```
-
-<br/>
-
-`HTTP Status Code`
-
- HTTP Status Code | Description              
-------------------|--------------------------
- 200 OK           | 잔액을 정상적으로 반환             
- 400 Bad Request  | 충전 금액이 잘못됨 (e.g 음수 or 0) 
- 400 Bad Request  | 사용자를 id 값이 올바르지 않음       
-
-## 주문 및 결제 API
-
-### 시퀀스 다이어그램 (주문 및 결제)
-
-<img width="660" alt="image" src="https://github.com/seungjjun/e-commerce/assets/104769120/006ad1b1-1e6f-42a6-a93a-2cb7cf36088c">
-
-`Endpoint`
-
-```
-POST /orders/{userId}
-```
-
-<br/>
-
-`Request`
-
-```json
-{
-  "receiver": {
-    "name": "홍길동",
-    "address": "서울시 송파구",
-    "phoneNumber": "01012345678"
-  },
-  "products": [
-    {
-      "id": 1,
-      "quantity": 1
-    },
-    ...
-  ],
-  "paymentAmount": 10000,
-  "paymentMethod": "CARD"
-}
-```
-
-**patch variable**
-
- 항목     | 필수 여부 | 설명              
---------|-------|-----------------
- userId | Y     | 주문 요청하는 사용자의 id 
-
-<br/>
-
-`Response`
-
-```json
-{
-  "orderId": 1,
-  "paymentId": 1,
-  "payAmount": 10000,
-  "receiver": {
-    "name": "홍길동",
-    "address": "서울시 송파구",
-    "phoneNumber": "01012345678"
-  },
-  "paymentMethod": "CARD",
-  "orderedAt": "2024-04-11 20:57:05",
-  "paidAt": "2024-04-11 20:57:05"
-}
-```
-
-<br/>
-
-`HTTP Status Code`
-
- HTTP Status Code | Description      
-------------------|------------------
- 201 Created      | 주문 결제 성공         
- 400 Bad Request  | 재고 부족으로 인한 주문 실패 
- 400 Bad Request  | 잔액 부족으로 인한 주문 실패 
- 404 Not Found    | 상품 정보를 찾지 못함     
-
-<br/>
-
-`Error`
-
-- 잘못된 userId값을 요청받았은 경우
-- 주문하려는 상품의 재고가 부족한 경우
-- 잔액이 부족한 경우
-
-### Swagger Api Docs
-
-<img width="800" alt="image" src="https://github.com/seungjjun/e-commerce/assets/104769120/dbec503f-ccf0-4096-a43d-49b87b08f434">
+---
 
 # 프로젝트 회고
 
 - [프로젝트 회고 글](https://seungjjun.tistory.com/329)
-- [주문 결제 시스템 이벤트 기반 아키텍처 전환 관련 트러블 슈팅](https://seungjjun.tistory.com/328)
-- [동시성 문제 유즈케이스 및 해결](https://seungjjun.tistory.com/332)
-- [쿼리 분석 및 인덱스 설계](https://seungjjun.tistory.com/334)
-- [캐시 적용하여 성능 개선](https://seungjjun.tistory.com/335)
