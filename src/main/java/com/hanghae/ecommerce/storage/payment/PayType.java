@@ -1,5 +1,6 @@
 package com.hanghae.ecommerce.storage.payment;
 
+import com.hanghae.ecommerce.api.error.UnsupportedPaymentMethodException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -29,6 +30,6 @@ public enum PayType {
 		return Arrays.stream(PayType.values())
 			.filter(payType -> payType.method.equals(method))
 			.findFirst()
-			.orElseThrow(() -> new NoSuchElementException("존재하지 않는 결제 수단입니다."));
+			.orElseThrow(() -> new UnsupportedPaymentMethodException("존재하지 않는 결제 수단입니다."));
 	}
 }
