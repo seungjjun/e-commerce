@@ -1,5 +1,7 @@
 package com.hanghae.ecommerce.domain.product;
 
+import com.hanghae.ecommerce.api.error.InsufficientStockException;
+
 public record Stock(
 	Long id,
 	Long productId,
@@ -7,7 +9,7 @@ public record Stock(
 ) {
 	public void isEnoughProductStockQuantityForOrder(Long orderQuantity) {
 		if (stockQuantity < orderQuantity) {
-			throw new IllegalArgumentException(id + " 상품의 재고가 부족합니다.");
+			throw new InsufficientStockException(id + " 상품의 재고가 부족합니다.");
 		}
 	}
 
