@@ -6,8 +6,8 @@ TDD 기반 e-커머스 서버 구축 프로젝트 입니다.
 
 - [활용 기술](#활용-기술)
 - [ERD](#erd)
-- [작업 내용](#작업 내용)
-- [아키텍처 설계](#아키텍처-설계)
+- [작업 내용](#작업-내용)
+- [아키텍처 설계](#architecture-설계)
 - [테스트](#테스트)
 - [프로젝트 회고](#프로젝트-회고)
 - [Git branch 전략](https://github.com/seungjjun/e-commerce/wiki/Git-Branch-%EC%A0%84%EB%9E%B5)
